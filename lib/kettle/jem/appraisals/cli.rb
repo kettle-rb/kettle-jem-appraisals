@@ -212,12 +212,13 @@ module Kettle
           # Use kettle-dev's gemspec reader if available, otherwise parse manually
           content = File.read(gemspec_path)
           deps = []
-          content.scan(/add_(?:runtime_)?dependency\s*\(\s*["']([^"']+)["']/) do |match|
-            deps << match[0]
-          end
-          # Also match add_dependency without parens
-          content.scan(/add_(?:runtime_)?dependency\s+["']([^"']+)["']/) do |match|
-            deps << match[0]
+          content.each_line do |line|
+            stripped = line.lstrip
+            next if stripped.start_with?("#")
+
+            if (match = stripped.match(/add_(?:runtime_)?dependency\s*\(?\s*["']([^"']+)["']/))
+              deps << match[1]
+            end
           end
           deps.uniq
         end
