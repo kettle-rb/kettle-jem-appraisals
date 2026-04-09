@@ -1,0 +1,13 @@
+module Kettle
+  module Jem
+    module Appraisals
+      module XStdLibsExclusion
+        ALWAYS_EXCLUDED: Array[String]
+
+        def self.from_template: (?String? template_path) -> Array[String]
+        def self.default_template_path: () -> String?
+        def self.excluded?: (String gem_name, ?exclusion_list: Array[String]?) -> bool
+      end
+    end
+  end
+end

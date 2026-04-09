@@ -1,0 +1,24 @@
+module Kettle
+  module Jem
+    module Appraisals
+      class GemVersionResolver
+        RUBYGEMS_API_BASE: String
+        RUBYGEMS_V2_API_BASE: String
+
+        attr_reader cache: Hash[String, untyped]
+
+        def initialize: () -> void
+        def versions: (String gem_name, ?include_prerelease: bool) -> Array[Hash[Symbol, untyped]]
+        def version_info: (String gem_name, String version) -> Hash[Symbol, untyped]?
+        def min_ruby_version: (String gem_name, String version) -> Gem::Version?
+        def minor_versions_by_major: (String gem_name) -> Array[Hash[Symbol, untyped]]
+
+        private
+
+        def fetch_versions: (String gem_name) -> Array[Hash[String, untyped]]
+        def fetch_gem_info: (String gem_name, String version) -> Hash[String, untyped]?
+        def parse_min_ruby: (String? requirement_str) -> Gem::Version?
+      end
+    end
+  end
+end

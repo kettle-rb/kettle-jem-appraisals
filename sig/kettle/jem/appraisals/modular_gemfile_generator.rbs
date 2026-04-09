@@ -1,0 +1,18 @@
+module Kettle
+  module Jem
+    module Appraisals
+      class ModularGemfileGenerator
+        attr_reader base_dir: String
+
+        def initialize: (?base_dir: String) -> void
+        def generate: (gem_name: String, version: String, ruby_series: String, ?sub_deps: Hash[String, String]) -> String
+        def generate_tier2: (gem_name: String, version: String, ruby_series: String) -> String
+
+        private
+
+        def build_content: (String gem_name, String version, Hash[String, String] sub_deps) -> String
+        def build_tier2_content: (String gem_name, String version) -> String
+      end
+    end
+  end
+end

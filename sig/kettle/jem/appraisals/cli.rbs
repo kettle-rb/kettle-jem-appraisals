@@ -1,0 +1,45 @@
+module Kettle
+  module Jem
+    module Appraisals
+      class CLI
+        CONFIG_FILE: String
+        APPRAISAL_MATRIX_KEY: String
+        DEFAULT_FRESHNESS_TTL: Integer
+
+        attr_reader args: Array[String]
+        attr_reader project_dir: String
+
+        def initialize: (?Array[String] args, ?project_dir: String) -> void
+        def self.run: (Array[String] args) -> void
+        def run: () -> void
+
+        private
+
+        def detect_mode: () -> Symbol
+        def has_versions?: (Hash[String, untyped] matrix) -> bool
+        def run_scaffold: () -> void
+        def run_resolve: () -> void
+        def load_config: () -> Hash[String, untyped]
+        def write_config: (Hash[String, untyped] config) -> void
+        def find_gemspec: () -> String?
+        def extract_runtime_deps: (String gemspec_path) -> Array[String]
+        def fresh?: (Hash[String, untyped] matrix) -> bool
+        def time_ago: (Integer timestamp) -> String
+        def detect_project_min_ruby: () -> Gem::Version?
+        def build_matrix: (
+          Array[Hash[String, untyped]] tier1_gems,
+          Array[Hash[String, untyped]] tier2_gems,
+          Array[String] ruby_series,
+          Hash[String, Hash[Symbol, Gem::Version]] bucket_ranges,
+          Hash[String, Array[Hash[Symbol, untyped]]] all_seams,
+          GemVersionResolver resolver,
+          MatrixBuilder builder,
+          ModularGemfileGenerator gemfile_gen,
+          SubDepResolver sub_resolver
+        ) -> Array[Hash[Symbol, untyped]]
+        def compatible?: (String gem_name, String version, String ruby_series, Hash[String, Hash[Symbol, Gem::Version]] bucket_ranges, GemVersionResolver resolver) -> bool
+        def cleanup_stale_gemfiles: (Array[Hash[Symbol, untyped]] current_entries) -> void
+      end
+    end
+  end
+end

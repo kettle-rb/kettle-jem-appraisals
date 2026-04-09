@@ -1,0 +1,17 @@
+module Kettle
+  module Jem
+    module Appraisals
+      class SubDepResolver
+        attr_reader resolver: GemVersionResolver
+
+        def initialize: (resolver: GemVersionResolver) -> void
+        def resolve: (String gem_name, String version, ?ruby_min: Gem::Version?) -> Hash[String, String]
+
+        private
+
+        def resolve_single: (String dep_name, String requirements_str, ?ruby_min: Gem::Version?) -> String?
+        def latest_patch: (String gem_name, String minor_version) -> String
+      end
+    end
+  end
+end

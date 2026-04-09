@@ -1,0 +1,35 @@
+module Kettle
+  module Jem
+    module Appraisals
+      class MatrixBuilder
+        VALID_MODES: Array[String]
+        LARGE_MAJOR_THRESHOLD: Integer
+
+        attr_reader resolver: GemVersionResolver
+
+        def initialize: (resolver: GemVersionResolver) -> void
+        def select_versions: (String gem_name, mode: String) -> Array[String]
+        def assign_version_buckets: (
+          String gem_name,
+          Array[String] selected_versions,
+          seams: Array[Hash[Symbol, untyped]],
+          buckets: Array[String],
+          bucket_ranges: Hash[String, Hash[Symbol, Gem::Version]]
+        ) -> Array[Hash[Symbol, untyped]]
+
+        private
+
+        def select_major: (Array[Hash[Symbol, untyped]] by_major) -> Array[String]
+        def select_minor: (Array[Hash[Symbol, untyped]] by_major) -> Array[String]
+        def select_minor_minmax: (Array[Hash[Symbol, untyped]] by_major, Integer current_major) -> Array[String]
+        def select_semver: (String gem_name, Array[Hash[Symbol, untyped]] by_major, Integer current_major) -> Array[String]
+        def find_ruby_cutoff_versions: (String gem_name, Array[String] minor_versions) -> Array[String]
+        def find_next_seam_ruby: (String ver, Gem::Version ver_min_ruby, Array[String] all_minors, Hash[String, Gem::Version] version_min_ruby) -> Gem::Version?
+        def compute_version_min_rubies: (Array[String] all_minors, Array[Hash[Symbol, untyped]] seams) -> Hash[String, Gem::Version]
+        def find_bucket_below: (Gem::Version ruby_floor, Array[String] buckets, Hash[String, Hash[Symbol, Gem::Version]] bucket_ranges) -> String?
+        def fill_bucket_gaps: (Array[Hash[Symbol, untyped]] assignments, Array[String] selected_sorted, Hash[String, Gem::Version] version_min_ruby, Array[String] buckets, Hash[String, Hash[Symbol, Gem::Version]] bucket_ranges, Array[String] all_minors) -> Array[Hash[Symbol, untyped]]
+        def latest_patch: (String gem_name, String minor_version) -> String
+      end
+    end
+  end
+end

@@ -1,0 +1,13 @@
+module Kettle
+  module Jem
+    module Appraisals
+      VERSION: String
+
+      MINIMUM_RUBY_FLOOR: Gem::Version
+
+      module Version
+        VERSION: String
+      end
+    end
+  end
+end

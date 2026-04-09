@@ -1,0 +1,22 @@
+module Kettle
+  module Jem
+    module Appraisals
+      class RubySeriesDetector
+        attr_reader resolver: GemVersionResolver
+
+        def initialize: (resolver: GemVersionResolver) -> void
+        def detect: (Array[Hash[String, untyped]] tier1_gems, Array[Hash[String, untyped]] tier2_gems, ?project_min_ruby: Gem::Version?) -> Array[String]
+        def detect_with_ranges: (Array[Hash[String, untyped]] tier1_gems, Array[Hash[String, untyped]] tier2_gems, ?project_min_ruby: Gem::Version?) -> Hash[Symbol, untyped]
+        def find_seams: (String gem_name, Array[String] versions) -> Array[Hash[Symbol, untyped]]
+
+        private
+
+        def collect_min_rubies: (Array[Hash[String, untyped]] gem_configs) -> Array[Gem::Version]
+        def minor_key: (Gem::Version version) -> String
+        def minor_versions_to_buckets_with_ranges: (Array[String] minor_versions) -> Hash[Symbol, untyped]
+        def bucket_sort_key: (String bucket) -> [Integer, Integer]
+        def latest_patch: (String gem_name, String minor_version) -> String
+      end
+    end
+  end
+end

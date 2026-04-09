@@ -1,0 +1,14 @@
+module Kettle
+  module Jem
+    module Appraisals
+      module GemAbbreviations
+        PREFIX: String
+        ABBREVIATIONS: Hash[String, String]
+
+        def self.abbreviate: (String gem_name) -> String
+        def self.format_version: (String version) -> String
+        def self.appraisal_name: (String tier1_gem, String tier1_version, String? tier2_gem, String? tier2_version, String ruby_series) -> String
+      end
+    end
+  end
+end

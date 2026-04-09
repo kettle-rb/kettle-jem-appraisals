@@ -1,0 +1,22 @@
+module Kettle
+  module Jem
+    module Appraisals
+      class WorkflowStrategyGenerator
+        LIFECYCLE_RANGES: Hash[String, Hash[Symbol, untyped]]
+
+        attr_reader bucket_ranges: Hash[String, Hash[Symbol, Gem::Version]]
+        attr_reader exec_cmd: String
+
+        def initialize: (bucket_ranges: Hash[String, Hash[Symbol, Gem::Version]], ?exec_cmd: String) -> void
+        def generate: (Array[Hash[Symbol, untyped]] appraisal_entries) -> Hash[String, Array[Hash[Symbol, untyped]]]
+        def generate_yaml_snippets: (Array[Hash[Symbol, untyped]] appraisal_entries) -> Hash[String, String]
+
+        private
+
+        def lifecycle_for: (Gem::Version ruby_floor) -> String
+        def ruby_version_for: (Gem::Version ruby_floor, String lifecycle) -> String
+        def build_matrix_entry: (Hash[Symbol, untyped] entry, String ruby_version) -> Hash[Symbol, untyped]
+      end
+    end
+  end
+end
