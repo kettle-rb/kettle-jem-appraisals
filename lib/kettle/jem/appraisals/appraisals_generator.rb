@@ -3,17 +3,24 @@
 module Kettle
   module Jem
     module Appraisals
-      # Generates the Appraisals file content from the computed matrix.
-      # Each appraisal entry eval_gemfiles its modular gemfiles.
+      # Generates the +Appraisals+ file content from the computed matrix.
+      #
+      # Each appraisal entry uses +eval_gemfile+ to compose its modular gemfiles
+      # (tier1, optional tier2, and +x_std_libs+).
+      #
+      # @example
+      #   content = AppraisalsGenerator.generate(matrix_entries)
+      #   File.write("Appraisals", content)
       class AppraisalsGenerator
-        # Generates the Appraisals file content.
-        # @param matrix [Array<Hash>] each entry:
-        #   { name: "ar-7-1-oa-2-1-r3",
-        #     tier1_gemfile: "gemfiles/modular/activerecord/r3/v7.1.gemfile",
-        #     tier2_gemfile: "gemfiles/modular/omniauth/r3/v2.1.gemfile",
-        #     x_std_libs_gemfile: "gemfiles/modular/x_std_libs/r3/libs.gemfile",
-        #     ruby_series: "r3" }
-        # @return [String] Appraisals file content
+        # Generates the full +Appraisals+ file content as a String.
+        #
+        # @param matrix [Array<Hash>] each entry must have the keys:
+        #   * +:name+ — the appraisal name (e.g., +"kja-ar-7-1-r3"+)
+        #   * +:tier1_gemfile+ — relative path to the tier1 modular gemfile
+        #   * +:tier2_gemfile+ — relative path to the tier2 modular gemfile (or +nil+)
+        #   * +:x_std_libs_gemfile+ — relative path to the x_std_libs gemfile
+        #   * +:ruby_series+ — the Ruby series bucket name
+        # @return [String] the complete Appraisals file content
         def self.generate(matrix)
           lines = [
             "# frozen_string_literal: true",

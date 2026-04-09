@@ -4,25 +4,29 @@ module Kettle
   module Jem
     module Appraisals
       # Generates GitHub Actions workflow strategy matrix entries from the
-      # resolved appraisal matrix. Groups entries by workflow lifecycle
-      # category (current, supported, legacy, unsupported, ancient) based
-      # on Ruby bucket ranges.
+      # resolved appraisal matrix.
+      #
+      # Groups entries by workflow lifecycle category (+current+, +supported+,
+      # +legacy+, +unsupported+, +ancient+) based on Ruby bucket ranges.
       #
       # Each matrix entry maps to a single CI job: a specific appraisal
       # (tier1×tier2 version combo) on a specific Ruby version.
       #
-      # Lifecycle categories follow the kettle-jem convention:
+      # == Lifecycle categories (kettle-jem convention)
+      #
       #   current     — latest stable MRI ("ruby"), plus jruby/truffleruby
       #   supported   — maintained MRI versions (currently 3.2, 3.3, 3.4)
       #   legacy      — security-only MRI (3.0, 3.1)
       #   unsupported — EOL but recent MRI (2.6, 2.7)
       #   ancient     — very old MRI (2.3, 2.4, 2.5)
+      #
+      # @example
+      #   gen = WorkflowStrategyGenerator.new(bucket_ranges: ranges, exec_cmd: "rake spec")
+      #   groups = gen.generate(appraisal_entries)
+      #   #=> { "current" => [{ruby: "ruby", appraisal: "kja-ar-8-r3", ...}], ... }
       class WorkflowStrategyGenerator
-        # Ruby lifecycle boundaries (update as Ruby EOL progresses).
-        # Maps lifecycle name → setup-ruby version string → Ruby minor range.
-        #
-        # These define which lifecycle workflow file a bucket falls into.
-        # The "ruby" alias always means "latest stable MRI" in setup-ruby.
+        # @return [Hash{String => Hash}] Ruby lifecycle boundaries mapping lifecycle
+        #   name to min/max +Gem::Version+ ranges (update as Ruby EOL progresses)
         LIFECYCLE_RANGES = {
           "current" => {ruby_alias: "ruby", min: Gem::Version.new("3.4"), max: Gem::Version.new("3.99")},
           "supported" => {min: Gem::Version.new("3.2"), max: Gem::Version.new("3.3")},
@@ -31,10 +35,14 @@ module Kettle
           "ancient" => {min: Gem::Version.new("2.3"), max: Gem::Version.new("2.5")},
         }.freeze
 
-        attr_reader :bucket_ranges, :exec_cmd
+        # @return [Hash{String => Hash}] bucket → +{floor: Gem::Version, ceiling: Gem::Version}+
+        attr_reader :bucket_ranges
 
-        # @param bucket_ranges [Hash<String, Hash>] bucket → {floor:, ceiling:} Gem::Versions
-        # @param exec_cmd [String] the test command (default: "rake spec")
+        # @return [String] the shell command to execute in each CI matrix job
+        attr_reader :exec_cmd
+
+        # @param bucket_ranges [Hash{String => Hash}] bucket → +{floor: Gem::Version, ceiling: Gem::Version}+
+        # @param exec_cmd [String] the test/build command (default: +"rake spec"+)
         def initialize(bucket_ranges:, exec_cmd: "rake spec")
           @bucket_ranges = bucket_ranges
           @exec_cmd = exec_cmd
@@ -42,9 +50,11 @@ module Kettle
 
         # Groups appraisal entries into workflow lifecycle files with matrix entries.
         #
-        # @param appraisal_entries [Array<Hash>] from CLI#build_matrix
-        # @return [Hash<String, Array<Hash>>] lifecycle → matrix include entries
-        #   e.g., { "current" => [{ruby: "ruby", appraisal: "ar-8-oa-2-r3", ...}], ... }
+        # @param appraisal_entries [Array<Hash>] entries from {CLI} build_matrix, each with
+        #   +:name+, +:ruby_series+, and gemfile path keys
+        # @return [Hash{String => Array<Hash>}] lifecycle name → sorted array of matrix
+        #   include entries, each with +:ruby+, +:appraisal+, +:exec_cmd+, +:gemfile+,
+        #   +:rubygems+, and +:bundler+ keys
         def generate(appraisal_entries)
           grouped = Hash.new { |h, k| h[k] = [] }
 
@@ -63,9 +73,10 @@ module Kettle
           grouped.transform_values { |entries| entries.sort_by { |e| e[:appraisal] } }
         end
 
-        # Generates YAML-compatible matrix snippets for each lifecycle.
-        # @param appraisal_entries [Array<Hash>] from CLI#build_matrix
-        # @return [Hash<String, String>] lifecycle → YAML strategy.matrix.include snippet
+        # Generates YAML-compatible +strategy.matrix.include+ snippets for each lifecycle.
+        #
+        # @param appraisal_entries [Array<Hash>] entries from {CLI} build_matrix
+        # @return [Hash{String => String}] lifecycle name → YAML strategy matrix snippet
         def generate_yaml_snippets(appraisal_entries)
           groups = generate(appraisal_entries)
 

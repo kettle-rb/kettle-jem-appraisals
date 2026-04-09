@@ -8,19 +8,34 @@ module Kettle
   module Jem
     module Appraisals
       # Queries the RubyGems.org API to resolve gem version information.
+      #
       # Caches results per session to avoid redundant API calls.
+      # Uses the v1 API for version listings and the v2 API for
+      # per-version dependency data.
+      #
+      # @example Fetch all stable versions of a gem
+      #   resolver = GemVersionResolver.new
+      #   resolver.versions("activerecord")
+      #   #=> [{number: "7.1.3", ruby_version: ">= 2.7.0", ...}, ...]
       class GemVersionResolver
+        # @return [String] base URL for the RubyGems v1 REST API
         RUBYGEMS_API_BASE = "https://rubygems.org/api/v1"
 
+        # @return [Hash] in-memory cache of API responses keyed by request identifier
         attr_reader :cache
 
         def initialize
           @cache = {}
         end
 
-        # Returns all versions of a gem as an array of hashes with keys:
-        #   :number, :ruby_version, :created_at, :prerelease
-        # Filters out prerelease versions by default.
+        # Returns all versions of a gem, sorted oldest-to-newest.
+        #
+        # Each entry is a Hash with the keys +:number+, +:ruby_version+,
+        # +:created_at+, and +:prerelease+.
+        #
+        # @param gem_name [String] the RubyGems gem name
+        # @param include_prerelease [Boolean] when +true+, includes pre-release versions (default: +false+)
+        # @return [Array<Hash>] version hashes sorted by +Gem::Version+
         def versions(gem_name, include_prerelease: false)
           raw = fetch_versions(gem_name)
           versions = raw.map { |v|
@@ -36,7 +51,13 @@ module Kettle
         end
 
         # Returns version info (dependencies, ruby_version) for a specific gem version.
-        # Uses the v2 API which has the dependencies structure.
+        #
+        # Uses the v2 API which includes the full dependency structure.
+        #
+        # @param gem_name [String] the RubyGems gem name
+        # @param version [String] an exact version string (e.g., +"7.1.3"+)
+        # @return [Hash, nil] a Hash with +:number+, +:ruby_version+, and +:runtime_dependencies+,
+        #   or +nil+ if the version was not found
         def version_info(gem_name, version)
           data = fetch_gem_info(gem_name, version)
           return unless data
@@ -54,9 +75,13 @@ module Kettle
         end
 
         # Returns the minimum Ruby version required by a specific gem version.
-        # Uses the versions list data (which already includes ruby_version)
+        #
+        # Uses the versions list data (which already includes +ruby_version+)
         # rather than the individual version endpoint.
-        # Returns nil if not specified.
+        #
+        # @param gem_name [String] the RubyGems gem name
+        # @param version [String] an exact version string (e.g., +"7.1.3"+)
+        # @return [Gem::Version, nil] the minimum required Ruby version, or +nil+ if unspecified
         def min_ruby_version(gem_name, version)
           vers = versions(gem_name)
           entry = vers.find { |v| v[:number] == version }
@@ -65,8 +90,13 @@ module Kettle
           parse_min_ruby(entry[:ruby_version])
         end
 
-        # Returns all minor versions (X.Y) for a gem, grouped by major.
-        # Each entry: { major: N, minors: ["X.Y", ...] }
+        # Returns all minor versions (+X.Y+) for a gem, grouped by major version.
+        #
+        # @param gem_name [String] the RubyGems gem name
+        # @return [Array<Hash>] sorted entries, each with +:major+ (Integer) and +:minors+ (Array<String>)
+        # @example
+        #   resolver.minor_versions_by_major("activerecord")
+        #   #=> [{major: 6, minors: ["6.0", "6.1"]}, {major: 7, minors: ["7.0", "7.1", "7.2"]}]
         def minor_versions_by_major(gem_name)
           vers = versions(gem_name)
           grouped = {}
@@ -96,6 +126,7 @@ module Kettle
           @cache[cache_key] = JSON.parse(response.body)
         end
 
+        # @return [String] base URL for the RubyGems v2 REST API
         RUBYGEMS_V2_API_BASE = "https://rubygems.org/api/v2/rubygems"
 
         def fetch_gem_info(gem_name, version)

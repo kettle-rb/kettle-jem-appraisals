@@ -4,26 +4,35 @@ module Kettle
   module Jem
     module Appraisals
       # Resolves sub-dependency versions for a tier1 gem version within a Ruby series.
-      # For each sub-dep, finds the newest version satisfying:
-      #   (tier1's gemspec dep requirement) ∩ (Ruby-series compatibility)
       #
-      # "Newest version where the following version drops support for a Ruby
-      #  version that the current version supports" — i.e., the last version
-      #  compatible with the target Ruby series.
+      # For each runtime dependency of the tier1 gem, finds the newest version
+      # satisfying both the tier1 gem's gemspec constraint and the target Ruby
+      # series compatibility.
+      #
+      # @example
+      #   resolver = SubDepResolver.new(resolver: gem_version_resolver)
+      #   resolver.resolve("activerecord", "7.1", ruby_min: Gem::Version.new("3.0"))
+      #   #=> {"sqlite3" => "1.6.9"}
       class SubDepResolver
+        # @return [GemVersionResolver] the resolver used to query RubyGems
         attr_reader :resolver
 
+        # @param resolver [GemVersionResolver] a resolver instance for querying gem version data
         def initialize(resolver:)
           @resolver = resolver
         end
 
-        # Resolves sub-deps for a given tier1 gem at a specific version.
-        # Returns a hash: { "sqlite3" => "1.6.9", ... }
+        # Resolves sub-dependencies for a given tier1 gem at a specific version.
         #
-        # @param gem_name [String] tier1 gem name
-        # @param version [String] tier1 gem version (e.g., "7.1")
-        # @param ruby_min [Gem::Version, nil] minimum Ruby for the target series
-        # @return [Hash<String, String>] sub-dep name => resolved version
+        # Queries the v2 API for the gem's runtime dependencies, excludes
+        # standard-library gems (via {XStdLibsExclusion}), and resolves each
+        # remaining dependency to a concrete version.
+        #
+        # @param gem_name [String] tier1 gem name (e.g., +"activerecord"+)
+        # @param version [String] tier1 minor version string (e.g., +"7.1"+)
+        # @param ruby_min [Gem::Version, nil] minimum Ruby version for the target series;
+        #   when set, prefers the newest sub-dep version compatible with this Ruby
+        # @return [Hash{String => String}] sub-dependency name → resolved version string
         def resolve(gem_name, version, ruby_min: nil)
           info = resolver.version_info(gem_name, latest_patch(gem_name, version))
           return {} unless info

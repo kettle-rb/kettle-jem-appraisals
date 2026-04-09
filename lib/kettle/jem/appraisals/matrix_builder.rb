@@ -8,33 +8,39 @@ module Kettle
       #
       # The optimal bucket for a gem version V is the NEWEST Ruby where V is
       # the best (latest) choice — i.e., the Ruby just below the next version's
-      # min_ruby requirement. This is the inverted perspective: not "what's the
+      # +min_ruby+ requirement. This is the inverted perspective: not "what's the
       # minimum Ruby this gem needs?" but "what's the newest Ruby where you'd
       # still use this gem version?"
       #
-      # Example with activerecord:
-      #   AR 5.2 (min_ruby=2.2) → optimal on r2.4 (Ruby 2.4 is newest before AR 6.0 needs 2.5)
-      #   AR 6.1 (min_ruby=2.5) → optimal on r2.6 (Ruby 2.6 is newest before AR 7.0 needs 2.7)
-      #   AR 7.1 (min_ruby=2.7) → optimal on r2   (Ruby 2.7 is newest before AR 7.2 needs 3.1)
-      #   AR 7.2 (min_ruby=3.1) → optimal on r3.1 (Ruby 3.1 is newest before AR 8.0 needs 3.2)
-      #   AR 8.1 (min_ruby=3.2) → optimal on r3   (catch-all, latest)
+      # @example Bucket assignment for activerecord
+      #   # AR 5.2 (min_ruby=2.2) → optimal on r2.4 (Ruby 2.4 is newest before AR 6.0 needs 2.5)
+      #   # AR 7.2 (min_ruby=3.1) → optimal on r3.1 (Ruby 3.1 is newest before AR 8.0 needs 3.2)
+      #   # AR 8.1 (min_ruby=3.2) → optimal on r3   (catch-all, latest)
       class MatrixBuilder
+        # @return [Array<String>] valid mode strings accepted by {#select_versions}
         VALID_MODES = %w[major minor minor-minmax semver].freeze
 
-        # When a single major version has more than this many minor versions,
-        # semver mode prunes to only the latest minor + Ruby-cutoff minors.
+        # @return [Integer] when a single major version has more than this many minor
+        #   versions, semver mode prunes to only the latest minor + Ruby-cutoff minors
         LARGE_MAJOR_THRESHOLD = 9
 
+        # @return [GemVersionResolver] the resolver used to query RubyGems
         attr_reader :resolver
 
+        # @param resolver [GemVersionResolver] a resolver instance for querying gem version data
         def initialize(resolver:)
           @resolver = resolver
         end
 
         # Returns selected version strings for a gem according to the mode.
-        # @param gem_name [String] the gem name
-        # @param mode [String] one of VALID_MODES
-        # @return [Array<String>] selected version strings like ["5.2", "6.0", "7.1"]
+        #
+        # @param gem_name [String] the RubyGems gem name
+        # @param mode [String] one of {VALID_MODES}: +"major"+, +"minor"+, +"minor-minmax"+, or +"semver"+
+        # @return [Array<String>] selected minor version strings (e.g., +["5.2", "6.0", "7.1"]+)
+        # @raise [ArgumentError] if +mode+ is not in {VALID_MODES}
+        # @example
+        #   builder.select_versions("activerecord", mode: "semver")
+        #   #=> ["5.2", "6.0", "6.1", "7.0", "7.1", "7.2", "8.0"]
         def select_versions(gem_name, mode:)
           raise ArgumentError, "Invalid mode: #{mode}. Must be one of: #{VALID_MODES.join(", ")}" unless VALID_MODES.include?(mode)
 
@@ -60,17 +66,22 @@ module Kettle
         # Instead of cross-producting versions × all buckets, each version
         # maps to the ONE bucket where it is the best (newest) choice.
         #
-        # Filler: if a bucket has no selected version assigned (gap from
+        # *Filler*: if a bucket has no selected version assigned (gap from
         # mode selection skipping versions that naturally cover that bucket),
         # backfill with the newest version from a prior seam range that can
-        # run on that bucket's Ruby.
+        # run on that bucket's Ruby. Filler entries are marked with +filler: true+.
         #
-        # @param gem_name [String] gem name
-        # @param selected_versions [Array<String>] versions selected by mode
-        # @param seams [Array<Hash>] from RubySeriesDetector#find_seams
-        # @param buckets [Array<String>] all detected Ruby bucket names
-        # @param bucket_ranges [Hash<String, Hash>] bucket → {floor:, ceiling:} Gem::Versions
-        # @return [Array<Hash>] [{version: "5.2", bucket: "r2.4"}, ...]
+        # @param gem_name [String] the RubyGems gem name
+        # @param selected_versions [Array<String>] versions selected by {#select_versions}
+        # @param seams [Array<Hash>] seam entries from {RubySeriesDetector#find_seams}
+        # @param buckets [Array<String>] all detected Ruby bucket names (e.g., +["r2.4", "r3"]+)
+        # @param bucket_ranges [Hash{String => Hash}] bucket → +{floor: Gem::Version, ceiling: Gem::Version}+
+        # @return [Array<Hash>] assignments, each +{version: String, bucket: String}+
+        #   (filler entries additionally have +filler: true+)
+        # @example
+        #   builder.assign_version_buckets("activerecord", ["6.1", "7.2"],
+        #     seams: seams, buckets: ["r2", "r3.1", "r3"], bucket_ranges: ranges)
+        #   #=> [{version: "6.1", bucket: "r2"}, {version: "7.2", bucket: "r3.1"}, ...]
         def assign_version_buckets(gem_name, selected_versions, seams:, buckets:, bucket_ranges:)
           return [] if selected_versions.empty? || buckets.empty?
 

@@ -3,17 +3,18 @@
 module Kettle
   module Jem
     module Appraisals
-      # Absolute minimum Ruby floor — the oldest version supported by the
-      # setup-ruby GitHub Action. Any gem's min_ruby below this is clamped up.
+      # @return [Gem::Version] absolute minimum Ruby floor — the oldest version supported
+      #   by the +setup-ruby+ GitHub Action. Any gem's +min_ruby+ below this is clamped up.
       MINIMUM_RUBY_FLOOR = Gem::Version.new("2.3")
 
-      # Derives Ruby series buckets from the min_ruby seams across gem versions.
+      # Derives Ruby series buckets from the +min_ruby+ seams across gem versions.
       #
       # Instead of guessing which Ruby series are needed from the project gemspec,
-      # this analyzes the actual min_ruby_version requirements of each selected
-      # gem version to find "seams" — points where a gem drops Ruby support.
+      # this analyzes the actual +required_ruby_version+ of each selected gem
+      # version to find "seams" — points where a gem drops Ruby support.
       #
-      # Ruby series bucket semantics (counterintuitive!):
+      # == Ruby series bucket semantics (counterintuitive!)
+      #
       #   r3     = catch-all for newest in that major (3.2+), NOT "3.0"
       #   r3.1   = covers 3.0–3.1 (older minors before the catch-all)
       #   r2     = catch-all for 2.7+ (last 2.x)
@@ -21,30 +22,43 @@ module Kettle
       #   r2.4   = covers 2.4–2.5
       #   vHEAD  = always included (git HEAD)
       #
-      # The major-only bucket (rN) is always the NEWEST catch-all for that major.
-      # Named rN.M buckets cover from that minor up to (but not including)
+      # The major-only bucket (+rN+) is always the NEWEST catch-all for that major.
+      # Named +rN.M+ buckets cover from that minor up to (but not including)
       # the next named bucket.
       class RubySeriesDetector
+        # @return [GemVersionResolver] the resolver used to query RubyGems
         attr_reader :resolver
 
+        # @param resolver [GemVersionResolver] a resolver instance for querying gem version data
         def initialize(resolver:)
           @resolver = resolver
         end
 
-        # Detects Ruby series buckets needed for the given tier1 + tier2 gem configs.
-        # Each gem config has "name" and "versions" keys.
+        # Detects Ruby series buckets needed for the given gem configs.
         #
-        # @param tier1_gems [Array<Hash>] tier1 gem configs with resolved versions
-        # @param tier2_gems [Array<Hash>] tier2 gem configs with resolved versions
-        # @param project_min_ruby [Gem::Version, nil] the project's own min_ruby (floor)
-        # @return [Array<String>] sorted Ruby series bucket names, e.g. ["r3.1", "r3"]
+        # Convenience wrapper around {#detect_with_ranges} that returns only
+        # the bucket name list.
+        #
+        # @param tier1_gems [Array<Hash>] tier1 gem configs with +"name"+ and +"versions"+ keys
+        # @param tier2_gems [Array<Hash>] tier2 gem configs with +"name"+ and +"versions"+ keys
+        # @param project_min_ruby [Gem::Version, nil] the project's own minimum Ruby (floor)
+        # @return [Array<String>] sorted Ruby series bucket names (e.g., +["r2.4", "r2", "r3.1", "r3"]+)
         def detect(tier1_gems, tier2_gems, project_min_ruby: nil)
           result = detect_with_ranges(tier1_gems, tier2_gems, project_min_ruby: project_min_ruby)
           result[:buckets]
         end
 
-        # Same as detect but also returns bucket ranges (floor/ceiling Gem::Versions).
-        # @return [Hash] { buckets: [...], bucket_ranges: { "r2.4" => {floor:, ceiling:}, ... } }
+        # Detects Ruby series buckets and also returns per-bucket floor/ceiling ranges.
+        #
+        # @param tier1_gems [Array<Hash>] tier1 gem configs with +"name"+ and +"versions"+ keys
+        # @param tier2_gems [Array<Hash>] tier2 gem configs with +"name"+ and +"versions"+ keys
+        # @param project_min_ruby [Gem::Version, nil] the project's own minimum Ruby (floor)
+        # @return [Hash{Symbol => Object}] +:buckets+ (Array<String>) and +:bucket_ranges+
+        #   (Hash{String => Hash{Symbol => Gem::Version}}) with +:floor+ and +:ceiling+ per bucket
+        # @example
+        #   detector.detect_with_ranges(tier1, tier2)
+        #   #=> { buckets: ["r2", "r3.1", "r3"],
+        #   #     bucket_ranges: { "r2" => {floor: v("2.7"), ceiling: v("2.99")}, ... } }
         def detect_with_ranges(tier1_gems, tier2_gems, project_min_ruby: nil)
           all_min_rubies = collect_min_rubies(tier1_gems + tier2_gems)
           if all_min_rubies.empty?
@@ -63,13 +77,18 @@ module Kettle
           {buckets: buckets, bucket_ranges: buckets_and_ranges[:ranges]}
         end
 
-        # For a single gem, returns the seam points where min_ruby changes.
-        # Returns an array of { version: "7.0", min_ruby: Gem::Version("2.7") } hashes,
-        # one per seam (where the min_ruby requirement increased).
+        # Returns the seam points for a single gem where +min_ruby+ increases.
         #
-        # @param gem_name [String]
-        # @param versions [Array<String>] sorted minor version strings
-        # @return [Array<Hash>] seam entries
+        # A "seam" is a version boundary where the gem's +required_ruby_version+
+        # increases compared to the previous version. These are the natural
+        # Ruby-compatibility cutoff points.
+        #
+        # @param gem_name [String] the RubyGems gem name
+        # @param versions [Array<String>] sorted minor version strings (e.g., +["6.0", "6.1", "7.0"]+)
+        # @return [Array<Hash>] seam entries, each +{version: String, min_ruby: Gem::Version}+
+        # @example
+        #   detector.find_seams("activerecord", ["6.0", "6.1", "7.0", "7.1"])
+        #   #=> [{version: "6.0", min_ruby: v("2.5")}, {version: "7.0", min_ruby: v("2.7")}]
         def find_seams(gem_name, versions)
           return [] if versions.empty?
 

@@ -8,24 +8,55 @@ module Kettle
   module Jem
     module Appraisals
       # CLI entry point for kettle-jem-appraisals.
-      # Auto-detects mode (scaffold vs resolve) based on config state,
-      # or accepts explicit --scaffold / --resolve flags.
+      #
+      # Auto-detects mode (+scaffold+ vs +resolve+) based on config state,
+      # or accepts explicit +--scaffold+ / +--resolve+ flags.
+      #
+      # In *scaffold* mode, reads the project gemspec, excludes standard-library
+      # gems, and writes a skeleton +.kettle-jem.yml+ with tier1 candidates.
+      #
+      # In *resolve* mode, queries RubyGems for version data, assigns gem
+      # versions to Ruby-series buckets, generates modular gemfiles, an
+      # +Appraisals+ file, and workflow strategy matrix snippets.
+      #
+      # @example Run from the command line
+      #   Kettle::Jem::Appraisals::CLI.run(["--resolve"])
+      #
+      # @example Instantiate and run
+      #   cli = Kettle::Jem::Appraisals::CLI.new(["--scaffold"], project_dir: "/path/to/gem")
+      #   cli.run
       class CLI
+        # @return [String] name of the per-project YAML configuration file
         CONFIG_FILE = ".kettle-jem.yml"
+
+        # @return [String] top-level key in the YAML config that holds the appraisal matrix
         APPRAISAL_MATRIX_KEY = "appraisal_matrix"
+
+        # @return [Integer] default freshness TTL in seconds (7 days)
         DEFAULT_FRESHNESS_TTL = 604_800 # 7 days in seconds
 
+        # @return [Array<String>] command-line arguments
+        # @return [String] absolute path to the project directory
         attr_reader :args, :project_dir
 
+        # @param args [Array<String>] command-line arguments (e.g., +["--scaffold"]+, +["--resolve"]+, +["--force"]+)
+        # @param project_dir [String] path to the project root (defaults to the current working directory)
         def initialize(args = [], project_dir: Dir.pwd)
           @args = args
           @project_dir = project_dir
         end
 
+        # Convenience entry point: instantiates a CLI and runs it.
+        #
+        # @param args [Array<String>] command-line arguments
+        # @return [void]
         def self.run(args)
           new(args).run
         end
 
+        # Detects the appropriate mode and dispatches to scaffold or resolve.
+        #
+        # @return [void]
         def run
           mode = detect_mode
           case mode

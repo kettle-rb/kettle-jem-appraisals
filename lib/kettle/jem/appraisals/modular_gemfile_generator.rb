@@ -4,20 +4,32 @@ module Kettle
   module Jem
     module Appraisals
       # Generates modular gemfile files for the appraisal matrix.
-      # Creates files like: gemfiles/modular/activerecord/r3/v7.1.gemfile
+      #
+      # Creates per-version gemfiles organized by gem name and Ruby series:
+      #   +gemfiles/modular/{gem_name}/{ruby_series}/v{version}.gemfile+
+      #
+      # @example
+      #   gen = ModularGemfileGenerator.new(base_dir: "/path/to/project")
+      #   gen.generate(gem_name: "activerecord", version: "7.1", ruby_series: "r3")
+      #   #=> "gemfiles/modular/activerecord/r3/v7.1.gemfile"
       class ModularGemfileGenerator
+        # @return [String] absolute path to the project root (where +gemfiles/+ lives)
         attr_reader :base_dir
 
-        # @param base_dir [String] path to the project root (where gemfiles/ lives)
+        # @param base_dir [String] path to the project root (defaults to the current working directory)
         def initialize(base_dir: Dir.pwd)
           @base_dir = base_dir
         end
 
-        # Generates a modular gemfile for a tier1 gem at a given version and ruby series.
-        # @param gem_name [String] e.g., "activerecord"
-        # @param version [String] e.g., "7.1"
-        # @param ruby_series [String] e.g., "r3"
-        # @param sub_deps [Hash] e.g., {"sqlite3" => "1.6.9"}
+        # Generates a modular gemfile for a tier1 gem, including its sub-dependencies.
+        #
+        # Writes the file to disk and returns the relative path.
+        #
+        # @param gem_name [String] tier1 gem name (e.g., +"activerecord"+)
+        # @param version [String] minor version string (e.g., +"7.1"+)
+        # @param ruby_series [String] Ruby series bucket (e.g., +"r3"+)
+        # @param sub_deps [Hash{String => String}] sub-dependency name → version constraint
+        #   (e.g., +{"sqlite3" => "1.6.9"}+)
         # @return [String] the relative path to the generated gemfile
         def generate(gem_name:, version:, ruby_series:, sub_deps: {})
           dir = File.join(base_dir, "gemfiles", "modular", gem_name, ruby_series)
@@ -31,11 +43,14 @@ module Kettle
           File.join("gemfiles", "modular", gem_name, ruby_series, filename)
         end
 
-        # Generates a tier2 modular gemfile.
-        # @param gem_name [String] e.g., "omniauth"
-        # @param version [String] e.g., "2.1"
-        # @param ruby_series [String] e.g., "r3"
-        # @return [String] the relative path
+        # Generates a modular gemfile for a tier2 gem (no sub-dependencies).
+        #
+        # Writes the file to disk and returns the relative path.
+        #
+        # @param gem_name [String] tier2 gem name (e.g., +"omniauth"+)
+        # @param version [String] minor version string (e.g., +"2.1"+)
+        # @param ruby_series [String] Ruby series bucket (e.g., +"r3"+)
+        # @return [String] the relative path to the generated gemfile
         def generate_tier2(gem_name:, version:, ruby_series:)
           dir = File.join(base_dir, "gemfiles", "modular", gem_name, ruby_series)
           FileUtils.mkdir_p(dir)
