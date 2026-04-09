@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require "json"
-require "net/http"
-require "uri"
-
 module Kettle
   module Jem
     module Appraisals
@@ -13,19 +9,36 @@ module Kettle
       # Uses the v1 API for version listings and the v2 API for
       # per-version dependency data.
       #
+      # Floor-detection logic (+min_ruby_version+, +parse_min_ruby+, and the
+      # underlying HTTP calls) is delegated to
+      # {Kettle::Jem::GemRubyFloor::Resolver} so the same implementation is
+      # shared with the +kettle-jem+ gemspec harmonization pipeline.
+      #
       # @example Fetch all stable versions of a gem
       #   resolver = GemVersionResolver.new
       #   resolver.versions("activerecord")
       #   #=> [{number: "7.1.3", ruby_version: ">= 2.7.0", ...}, ...]
       class GemVersionResolver
-        # @return [String] base URL for the RubyGems v1 REST API
+        # @return [String] base URL for the RubyGems v1 REST API (kept for
+        #   compatibility; actual requests go through the floor resolver)
         RUBYGEMS_API_BASE = "https://rubygems.org/api/v1"
 
-        # @return [Hash] in-memory cache of API responses keyed by request identifier
-        attr_reader :cache
+        # @return [Kettle::Jem::GemRubyFloor::Resolver] the shared floor resolver
+        #   that owns the HTTP cache and all API calls
+        attr_reader :floor_resolver
 
-        def initialize
-          @cache = {}
+        # @return [Hash] in-memory cache of API responses (shared with the floor
+        #   resolver — this is the same object, not a copy)
+        def cache
+          floor_resolver.cache
+        end
+
+        # @param floor_resolver [Kettle::Jem::GemRubyFloor::Resolver, nil]
+        #   optional pre-built resolver (useful for sharing a warm cache across
+        #   multiple components in the same session); a new instance is created
+        #   when not provided
+        def initialize(floor_resolver: nil)
+          @floor_resolver = floor_resolver || Kettle::Jem::GemRubyFloor::Resolver.new
         end
 
         # Returns all versions of a gem, sorted oldest-to-newest.
@@ -76,18 +89,13 @@ module Kettle
 
         # Returns the minimum Ruby version required by a specific gem version.
         #
-        # Uses the versions list data (which already includes +ruby_version+)
-        # rather than the individual version endpoint.
+        # Delegates to {Kettle::Jem::GemRubyFloor::Resolver#min_ruby_version}.
         #
         # @param gem_name [String] the RubyGems gem name
         # @param version [String] an exact version string (e.g., +"7.1.3"+)
         # @return [Gem::Version, nil] the minimum required Ruby version, or +nil+ if unspecified
         def min_ruby_version(gem_name, version)
-          vers = versions(gem_name)
-          entry = vers.find { |v| v[:number] == version }
-          return unless entry && entry[:ruby_version]
-
-          parse_min_ruby(entry[:ruby_version])
+          floor_resolver.min_ruby_version(gem_name, version)
         end
 
         # Returns all minor versions (+X.Y+) for a gem, grouped by major version.
@@ -115,47 +123,24 @@ module Kettle
 
         private
 
+        # Delegates raw version list fetching to the floor resolver so the HTTP
+        # cache is shared across both +GemVersionResolver+ and
+        # +Kettle::Jem::GemRubyFloor::Resolver+ when they are used together.
         def fetch_versions(gem_name)
-          cache_key = "versions:#{gem_name}"
-          return @cache[cache_key] if @cache.key?(cache_key)
-
-          uri = URI("#{RUBYGEMS_API_BASE}/versions/#{gem_name}.json")
-          response = Net::HTTP.get_response(uri)
-          raise "RubyGems API error for #{gem_name}: #{response.code}" unless response.is_a?(Net::HTTPSuccess)
-
-          @cache[cache_key] = JSON.parse(response.body)
+          floor_resolver.fetch_versions(gem_name)
         end
 
         # @return [String] base URL for the RubyGems v2 REST API
         RUBYGEMS_V2_API_BASE = "https://rubygems.org/api/v2/rubygems"
 
+        # Delegates v2 gem info fetching to the floor resolver.
         def fetch_gem_info(gem_name, version)
-          cache_key = "info:#{gem_name}:#{version}"
-          return @cache[cache_key] if @cache.key?(cache_key)
-
-          uri = URI("#{RUBYGEMS_V2_API_BASE}/#{gem_name}/versions/#{version}.json")
-          response = Net::HTTP.get_response(uri)
-          return unless response.is_a?(Net::HTTPSuccess)
-
-          @cache[cache_key] = JSON.parse(response.body)
+          floor_resolver.fetch_gem_info(gem_name, version)
         end
 
-        # Extracts the minimum Ruby version from a requirement string like ">= 2.7.0"
+        # Delegates requirement string parsing to the floor resolver.
         def parse_min_ruby(requirement_str)
-          return if requirement_str.nil? || requirement_str.strip.empty?
-
-          req = Gem::Requirement.new(requirement_str)
-          # Find the >= constraint and extract its version
-          req.requirements.each do |op, ver|
-            return ver if op == ">="
-          end
-          # If only ~> is used, the base version is the minimum
-          req.requirements.each do |op, ver|
-            return ver if op == "~>"
-          end
-          nil
-        rescue ArgumentError
-          nil
+          floor_resolver.parse_min_ruby(requirement_str)
         end
       end
     end

@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
+require "kettle/jem/gem_ruby_floor"
+
 module Kettle
   module Jem
     module Appraisals
       # @return [Gem::Version] absolute minimum Ruby floor — the oldest version supported
       #   by the +setup-ruby+ GitHub Action. Any gem's +min_ruby+ below this is clamped up.
-      MINIMUM_RUBY_FLOOR = Gem::Version.new("2.3")
+      #
+      # Re-exported from {Kettle::Jem::GemRubyFloor::MINIMUM_RUBY_FLOOR}
+      MINIMUM_RUBY_FLOOR = Kettle::Jem::GemRubyFloor::MINIMUM_RUBY_FLOOR
 
       # Derives Ruby series buckets from the +min_ruby+ seams across gem versions.
       #
