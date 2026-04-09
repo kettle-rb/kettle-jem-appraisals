@@ -2,33 +2,34 @@
 # frozen_string_literal: true
 
 # kettle-jem:freeze
+# To retain chunks of comments & code during kettle-jem-appraisals templating:
+# Wrap custom sections with freeze markers (e.g., as above and below this comment chunk).
+# kettle-jem-appraisals will then preserve content between those markers across template runs.
+# kettle-jem:unfreeze
+
+# kettle-jem:freeze
 # To retain chunks of comments & code during kettle-jem templating:
 # Wrap custom sections with freeze markers (e.g., as above and below this comment chunk).
 # kettle-jem will then preserve content between those markers across template runs.
 # kettle-jem:unfreeze
 
-gem_version =
-  if RUBY_VERSION >= "3.1" # rubocop:disable Gemspec/RubyVersionGlobalsUsage
-    Module.new.tap { |mod| Kernel.load("#{__dir__}/lib/kettle/jem/appraisals/version.rb", mod) }::Kettle::Jem::Appraisals::Version::VERSION
-  else
-    lib = File.expand_path("lib", __dir__)
-    $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-    require "kettle/jem/appraisals/version"
-    Kettle::Jem::Appraisals::Version::VERSION
-  end
-
 Gem::Specification.new do |spec|
   spec.name = "kettle-jem-appraisals"
-  spec.version = gem_version
+  spec.version = Module.new.tap { |mod| Kernel.load("#{__dir__}/lib/kettle/jem/appraisals/version.rb", mod) }::Kettle::Jem::Appraisals::Version::VERSION
   spec.authors = ["Peter H. Boling"]
   spec.email = ["floss@galtzo.com"]
 
   spec.summary = "🍲 Auto-generate Appraisal matrices for kettle-jem managed gems"
   spec.description = "🍲 Kettle::Jem::Appraisals auto-generates CI test matrices from RubyGems API data. Scaffolds tier1/tier2 gem lists from gemspec, resolves version spreads per mode (major/minor/minor-minmax/semver), generates modular gemfiles and Appraisals files. Part of the kettle-rb ecosystem."
   spec.homepage = "https://github.com/kettle-rb/kettle-jem-appraisals"
-  spec.licenses = ["AGPL-3.0-only"]
+  spec.licenses = ["MIT"]
   spec.required_ruby_version = ">= 3.1.0"
 
+  # Linux distros often package gems and securely certify them independent
+  #   of the official RubyGem certification process. Allowed via ENV["SKIP_GEM_SIGNING"]
+  # Ref: https://gitlab.com/ruby-oauth/version_gem/-/issues/3
+  # Hence, only enable signing if `SKIP_GEM_SIGNING` is not set in ENV.
+  # See CONTRIBUTING.md
   unless ENV.include?("SKIP_GEM_SIGNING")
     user_cert = "certs/#{ENV.fetch("GEM_CERT_USER", ENV["USER"])}.pem"
     cert_file_path = File.join(__dir__, user_cert)
@@ -53,12 +54,16 @@ Gem::Specification.new do |spec|
   spec.metadata["discord_uri"] = "https://discord.gg/3qme4XHNKN"
   spec.metadata["rubygems_mfa_required"] = "true"
 
+  # Specify which files are part of the released package.
   spec.files = Dir[
     "lib/**/*.rb",
     "sig/**/*.rbs",
+    "lib/**/*.rake",
   ]
 
+  # Automatically included with gem package, no need to list again in files.
   spec.extra_rdoc_files = Dir[
+    # Files (alphabetical)
     "CHANGELOG.md",
     "CITATION.cff",
     "CODE_OF_CONDUCT.md",
@@ -66,6 +71,8 @@ Gem::Specification.new do |spec|
     "FUNDING.md",
     "LICENSE.txt",
     "README.md",
+    "REEK",
+    "RUBOCOP.md",
     "SECURITY.md",
   ]
   spec.rdoc_options += [
@@ -81,12 +88,62 @@ Gem::Specification.new do |spec|
   ]
   spec.require_paths = ["lib"]
   spec.bindir = "exe"
+  # Listed files are the relative paths from bindir above.
   spec.executables = ["kettle-jem-appraisals"]
 
   # Runtime dependencies
   spec.add_dependency("kettle-dev", ">= 2.0")
   spec.add_dependency("kettle-jem", ">= 1.0")
+  # Utilities
   spec.add_dependency("version_gem", "~> 1.1", ">= 1.1.9")
+
+  # NOTE: It is preferable to list development dependencies in the gemspec due to increased
+  #       visibility and discoverability.
+  #       However, development dependencies in gemspec will install on
+  #       all versions of Ruby that will run in CI.
+  #       This gem, and its gemspec runtime dependencies, will install on Ruby down to 3.1.0.
+  #       This gem, and its gemspec development dependencies, will install on Ruby down to 3.1.0.
+  #       Thus, dev dependencies in gemspec must have
+  #
+  #       required_ruby_version ">= 3.1.0" (or lower)
+  #
+  #       Development dependencies that require strictly newer Ruby versions should be in a "gemfile",
+  #       and preferably a modular one (see gemfiles/modular/*.gemfile).
+
+  # Security
+  spec.add_development_dependency("bundler-audit", "~> 0.9.3")
+
+  # Tasks
+  spec.add_development_dependency("rake", "~> 13.0")
+
+  # Debugging
+  spec.add_development_dependency("require_bench", "~> 1.0", ">= 1.0.4")            # ruby >= 2.2.0
+
+  # Testing
+  spec.add_development_dependency("appraisal2", "~> 3.0", ">= 3.0.6")               # ruby >= 1.8.7, for testing against multiple versions of dependencies
+  spec.add_development_dependency("kettle-test", "~> 1.0", ">= 1.0.10")
+
+  # Releasing
+  spec.add_development_dependency("ruby-progressbar", "~> 1.13")                    # ruby >= 0
+  spec.add_development_dependency("stone_checksums", "~> 1.0", ">= 1.0.3")          # ruby >= 2.2.0
+
+  # Git integration (optional)
+  # The 'git' gem is optional; kettle-jem-appraisals falls back to shelling out to `git` if it is not present.
+  # The current release of the git gem depends on activesupport, which makes it too heavy to depend on directly
+  # spec.add_dependency("git", ">= 1.19.1")                               # ruby >= 2.3
+
+  # Development tasks
+  # The cake is a lie. erb v2.2, the oldest release, was never compatible with Ruby 2.3.
+  # This means we have no choice but to use the erb that shipped with Ruby 2.3
+  # /opt/hostedtoolcache/Ruby/2.3.8/x64/lib/ruby/gems/2.3.0/gems/erb-2.2.2/lib/erb.rb:670:in `prepare_trim_mode': undefined method `match?' for "-":String (NoMethodError)
+  # spec.add_development_dependency("erb", ">= 2.2")                                  # ruby >= 2.3.0, not SemVer, old rubies get dropped in a patch.
+  spec.add_development_dependency("gitmoji-regex", "~> 1.0", ">= 1.0.3")            # ruby >= 2.3.0
+  # HTTP recording for deterministic specs
+  # In Ruby 3.5 (HEAD) the CGI library has been pared down, so we also need to depend on gem "cgi" for ruby@head
+  # This is done in the "head" appraisal.
+  # See: https://github.com/vcr/vcr/issues/1057
+  # spec.add_development_dependency("vcr", ">= 4")                        # 6.0 claims to support ruby >= 2.3, but fails on ruby 2.4
+  # spec.add_development_dependency("webmock", ">= 3")                    # Last version to support ruby >= 2.3
 
   # kettle-jem:freeze
   # Dev dependencies
