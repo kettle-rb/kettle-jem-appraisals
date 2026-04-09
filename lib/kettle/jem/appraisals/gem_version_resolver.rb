@@ -36,6 +36,7 @@ module Kettle
         end
 
         # Returns version info (dependencies, ruby_version) for a specific gem version.
+        # Uses the v2 API which has the dependencies structure.
         def version_info(gem_name, version)
           data = fetch_gem_info(gem_name, version)
           return nil unless data
@@ -46,19 +47,22 @@ module Kettle
           }
 
           {
-            number: data["version"],
-            ruby_version: data["required_ruby_version"],
+            number: data["number"],
+            ruby_version: data["ruby_version"],
             runtime_dependencies: runtime_deps,
           }
         end
 
         # Returns the minimum Ruby version required by a specific gem version.
+        # Uses the versions list data (which already includes ruby_version)
+        # rather than the individual version endpoint.
         # Returns nil if not specified.
         def min_ruby_version(gem_name, version)
-          info = version_info(gem_name, version)
-          return nil unless info && info[:ruby_version]
+          vers = versions(gem_name)
+          entry = vers.find { |v| v[:number] == version }
+          return nil unless entry && entry[:ruby_version]
 
-          parse_min_ruby(info[:ruby_version])
+          parse_min_ruby(entry[:ruby_version])
         end
 
         # Returns all minor versions (X.Y) for a gem, grouped by major.
@@ -92,11 +96,13 @@ module Kettle
           @cache[cache_key] = JSON.parse(response.body)
         end
 
+        RUBYGEMS_V2_API_BASE = "https://rubygems.org/api/v2/rubygems"
+
         def fetch_gem_info(gem_name, version)
           cache_key = "info:#{gem_name}:#{version}"
           return @cache[cache_key] if @cache.key?(cache_key)
 
-          uri = URI("#{RUBYGEMS_API_BASE}/versions/#{gem_name}/#{version}.json")
+          uri = URI("#{RUBYGEMS_V2_API_BASE}/#{gem_name}/versions/#{version}.json")
           response = Net::HTTP.get_response(uri)
           return nil unless response.is_a?(Net::HTTPSuccess)
 

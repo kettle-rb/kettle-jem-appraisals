@@ -161,8 +161,21 @@ module Kettle
             puts "    📦 #{name} sub-deps: #{deps.keys.join(", ")}" unless deps.empty?
           end
 
-          # Build the cross-product matrix
-          ruby_series = detect_ruby_series
+          # Detect Ruby series from gem version seams
+          series_detector = RubySeriesDetector.new(resolver: resolver)
+          project_min_ruby = detect_project_min_ruby
+          ruby_series = series_detector.detect(tier1_gems, tier2_gems, project_min_ruby: project_min_ruby)
+          puts "  🔴 Ruby series: #{ruby_series.join(", ")}"
+
+          # Show seam analysis
+          (tier1_gems + tier2_gems).each do |gem_config|
+            seams = series_detector.find_seams(gem_config["name"], gem_config["versions"] || [])
+            next if seams.empty?
+
+            seam_str = seams.map { |s| "#{s[:version]}→ruby≥#{s[:min_ruby]}" }.join(", ")
+            puts "    🔗 #{gem_config["name"]} seams: #{seam_str}"
+          end
+
           appraisal_entries = build_matrix(tier1_gems, tier2_gems, ruby_series, resolver, gemfile_gen, sub_resolver)
 
           puts "  📊 Generated #{appraisal_entries.size} appraisal entries"
@@ -244,23 +257,14 @@ module Kettle
           end
         end
 
-        # Detects which Ruby series buckets are relevant based on min_ruby from gemspec.
-        def detect_ruby_series
+        # Extracts the project's min_ruby from its gemspec (used as a floor).
+        def detect_project_min_ruby
           gemspec_path = find_gemspec
-          return ["r3"] unless gemspec_path
+          return nil unless gemspec_path
 
           content = File.read(gemspec_path)
           if (match = content.match(/required_ruby_version.*?>=.*?(\d+\.\d+)/))
-            min_ruby = Gem::Version.new(match[1])
-            series = []
-            # Generate buckets based on min_ruby
-            major = min_ruby.segments[0]
-            series << "r#{major}"
-            # If the gem supports an older major, add that too
-            series << "r#{major - 1}" if major > 2
-            series
-          else
-            ["r3"]
+            Gem::Version.new(match[1])
           end
         end
 

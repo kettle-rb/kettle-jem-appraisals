@@ -16,6 +16,7 @@ module Kettle
       autoload :MatrixBuilder, "kettle/jem/appraisals/matrix_builder"
       autoload :ModularGemfileGenerator, "kettle/jem/appraisals/modular_gemfile_generator"
       autoload :AppraisalsGenerator, "kettle/jem/appraisals/appraisals_generator"
+      autoload :RubySeriesDetector, "kettle/jem/appraisals/ruby_series_detector"
       autoload :SubDepResolver, "kettle/jem/appraisals/sub_dep_resolver"
       autoload :XStdLibsExclusion, "kettle/jem/appraisals/x_std_libs_exclusion"
     end
