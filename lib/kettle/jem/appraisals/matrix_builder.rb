@@ -195,6 +195,7 @@ module Kettle
 
         # Builds a hash mapping each minor version string to its min_ruby (Gem::Version).
         # Versions between seams inherit the previous seam's min_ruby.
+        # Values are clamped to MINIMUM_RUBY_FLOOR (setup-ruby GHA minimum).
         def compute_version_min_rubies(all_minors, seams)
           mapping = {}
           current_ruby = nil
@@ -208,7 +209,9 @@ module Kettle
               current_ruby = seams[seam_idx][:min_ruby]
               seam_idx += 1
             end
-            mapping[ver] = current_ruby if current_ruby
+            if current_ruby
+              mapping[ver] = [current_ruby, MINIMUM_RUBY_FLOOR].max
+            end
           end
 
           mapping

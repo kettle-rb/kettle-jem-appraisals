@@ -3,6 +3,10 @@
 module Kettle
   module Jem
     module Appraisals
+      # Absolute minimum Ruby floor — the oldest version supported by the
+      # setup-ruby GitHub Action. Any gem's min_ruby below this is clamped up.
+      MINIMUM_RUBY_FLOOR = Gem::Version.new("2.3")
+
       # Derives Ruby series buckets from the min_ruby seams across gem versions.
       #
       # Instead of guessing which Ruby series are needed from the project gemspec,
@@ -89,6 +93,7 @@ module Kettle
         private
 
         # Collects all distinct min_ruby versions across all gem versions.
+        # Clamps any value below MINIMUM_RUBY_FLOOR up to the floor.
         def collect_min_rubies(gem_configs)
           rubies = Set.new
 
@@ -98,7 +103,7 @@ module Kettle
             next if versions.empty?
 
             seams = find_seams(name, versions)
-            seams.each { |s| rubies << s[:min_ruby] }
+            seams.each { |s| rubies << [s[:min_ruby], MINIMUM_RUBY_FLOOR].max }
           end
 
           rubies.to_a.sort

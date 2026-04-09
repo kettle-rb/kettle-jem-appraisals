@@ -92,5 +92,29 @@ RSpec.describe Kettle::Jem::Appraisals::RubySeriesDetector do
         expect(result).to eq(["r3"])
       end
     end
+
+    context "with min_ruby below MINIMUM_RUBY_FLOOR" do
+      let(:tier1) { [{"name" => "oldgem", "versions" => ["1.0", "2.0"]}] }
+      let(:tier2) { [] }
+
+      before do
+        allow(resolver).to receive(:versions).and_return(
+          [{number: "1.0.0"}, {number: "2.0.0"}],
+        )
+      end
+
+      it "clamps min_ruby values up to the setup-ruby floor (2.3)" do
+        # oldgem 1.0 → Ruby 1.9, oldgem 2.0 → Ruby 2.1
+        allow(resolver).to receive(:min_ruby_version)
+          .with("oldgem", anything)
+          .and_return(Gem::Version.new("1.9"), Gem::Version.new("2.1"))
+
+        result = detector.detect(tier1, tier2)
+        # Both 1.9 and 2.1 are below 2.3, so they both clamp to 2.3,
+        # producing a single bucket (no seam between them after clamping)
+        expect(result.none? { |b| b.include?("1.") }).to be true
+        expect(result.none? { |b| b.include?("2.1") }).to be true
+      end
+    end
   end
 end
