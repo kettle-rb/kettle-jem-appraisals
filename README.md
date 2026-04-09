@@ -28,9 +28,25 @@ I've summarized my thoughts in [this blog post](https://dev.to/galtzo/hostile-ta
 
 ## 🌻 Synopsis
 
-Scaffolds tier1/tier2 gem lists from gemspec analysis, resolves version
-spreads from RubyGems API data per mode (major/minor/minor-minmax/semver),
-generates modular gemfiles and Appraisals files.
+`kettle-jem-appraisals` automates CI testing matrix generation for Ruby gems.
+It reads your gemspec, queries the [RubyGems API](https://rubygems.org/api/v1/versions/)
+to discover published versions of your runtime dependencies, detects Ruby-version
+seam points (where `required_ruby_version` changes), and produces:
+
+- **Modular gemfiles** under `gemfiles/modular/{gem}/{ruby_series}/v{version}.gemfile`
+- An **Appraisals** file for use with [appraisal2](https://github.com/appraisal-rb/appraisal2)
+- **Workflow strategy** matrix snippets for GitHub Actions CI
+
+### Key concepts
+
+| Concept | Description |
+|---------|-------------|
+| **Tier 1** | Primary runtime dependencies whose version matrix you test against (e.g. `activerecord`, `mail`) |
+| **Tier 2** | Secondary runtime dependencies cross-producted with tier 1 (e.g. `omniauth`) |
+| **Ruby series** | Buckets like `r2.4`, `r2.6`, `r2`, `r3.1`, `r3` derived from min-ruby seam analysis |
+| **Seam** | A version boundary where a gem's `required_ruby_version` floor increases |
+| **Mode** | Version selection strategy: `major`, `minor`, `minor-minmax`, or `semver` |
+| **`kja-` prefix** | All generated appraisal names start with `kja-` for reliable cleanup on regeneration |
 
 ## 💡 Info you can shake a stick at
 
@@ -146,17 +162,179 @@ NOTE: Be prepared to track down certs for signed gems and add them the same way 
 
 ## ⚙️ Configuration
 
+Configuration lives in `.kettle-jem.yml` under the `appraisal_matrix` key.
+Running `--scaffold` creates a starter config from your gemspec.
+
+### Config schema
+
+```yaml
+appraisal_matrix:
+  # Global version selection mode (default: semver)
+  # Per-gem overrides via the "mode" key on individual gem entries.
+  mode: semver
+
+  # Seconds before a resolved matrix is considered stale (default: 604800 = 7 days).
+  # Use --force to bypass.
+  freshness_ttl: 604800
+
+  # Command to run in CI for each appraisal entry (default: "rake spec")
+  exec_cmd: "rake spec"
+
+  gems:
+    # Tier 1: primary dependencies whose versions drive the matrix.
+    # Each tier1 version is assigned to its optimal Ruby bucket.
+    tier1:
+      - name: activerecord
+      - name: mail
+        mode: major  # per-gem mode override
+
+    # Optional tier1_mode: default mode for all tier1 gems (overrides global mode)
+    # tier1_mode: minor-minmax
+
+    # Tier 2: secondary dependencies cross-producted with tier1.
+    # Omit if your gem has only one primary dependency.
+    tier2:
+      - name: omniauth
+
+    # Optional tier2_mode: default mode for all tier2 gems
+    # tier2_mode: major
+```
+
+### Version selection modes
+
+| Mode | Selects | Best for |
+|------|---------|----------|
+| `major` | Latest minor of each major version | Large gems with many majors (e.g. Rails) |
+| `minor` | Every minor version across all majors | Small gems with few versions |
+| `minor-minmax` | First + last minor per older major; all minors of current major | Balanced coverage |
+| `semver` | Latest minor per older major + Ruby-cutoff minors + all minors of current major | **Default** — best signal-to-noise ratio |
+
+#### Semver pruning
+
+When a single major version has more than 9 minor releases (e.g. `aws-sdk-dynamodb`
+with 166 minors in major 1), semver mode automatically prunes to:
+
+- The **latest minor** of that major
+- Any minor that is the **last before a Ruby version is dropped** (Ruby-cutoff versions)
+
+This prevents matrix explosion while preserving meaningful coverage.
+
+### Appraisal naming
+
+All generated names are prefixed with `kja-` (kettle-jem-appraisals) so that
+regeneration can reliably identify and remove stale entries.
+
+Format: `kja-{tier1}-{t1ver}-{tier2}-{t2ver}-{ruby}`
+
+Common gem abbreviations are applied automatically:
+
+| Gem | Abbreviation |
+|-----|-------------|
+| `activerecord` | `ar` |
+| `activesupport` | `as` |
+| `omniauth` | `oa` |
+| `mongoid` | `mo` |
+| `sequel` | `sq` |
+
+Examples: `kja-ar-7-1-oa-2-1-r3`, `kja-mail-2-8-r3` (tier1-only)
+
+### Optimal bucket assignment
+
+Rather than cross-producting every gem version with every Ruby series,
+each tier1 version is assigned to its **optimal bucket** — the newest Ruby
+where that version is the best (latest) choice. Gaps are backfilled automatically.
+
+Example with `activerecord`:
+
+| Version | Optimal bucket | Reason |
+|---------|---------------|--------|
+| AR 5.2 | `r2.4` | Next seam (AR 6.0) needs Ruby ≥2.5; newest Ruby below is 2.4 |
+| AR 6.1 | `r2.6` | Next seam (AR 7.0) needs Ruby ≥2.7; newest Ruby below is 2.6 |
+| AR 7.1 | `r2` | Next seam (AR 7.2) needs Ruby ≥3.1; newest Ruby below is 2.7 |
+| AR 7.2 | `r3.1` | Next seam (AR 8.0) needs Ruby ≥3.2; newest Ruby below is 3.1 |
+| AR 8.1 | `r3` | Catch-all latest bucket |
+
 ## 🔧 Basic Usage
 
-From inside your gem's repository:
+### Two-step workflow
+
+**Step 1 — Scaffold** reads your gemspec and populates `.kettle-jem.yml`:
 
 ```sh
-# Scaffold initial tier1/tier2 from gemspec
 kettle-jem-appraisals --scaffold
+```
 
-# Edit .kettle-jem.yml to arrange tiers, then resolve
+Review the generated config: move gems between `tier1` and `tier2`,
+set per-gem `mode` overrides, and remove any gems you don't want in the matrix.
+
+**Step 2 — Resolve** queries RubyGems, computes the matrix, and writes files:
+
+```sh
 kettle-jem-appraisals --resolve
 ```
+
+This generates:
+- `gemfiles/modular/{gem}/{ruby_series}/v{version}.gemfile` — one per version×bucket
+- `Appraisals` — references the modular gemfiles
+- Runs `bin/appraisal generate` to create flat gemfiles (if binstub exists)
+
+### CLI flags
+
+| Flag | Description |
+|------|-------------|
+| `--scaffold` | Force scaffold mode (even if config exists) |
+| `--resolve` | Force resolve mode |
+| `--force` | Bypass freshness TTL and re-resolve |
+
+Without flags, the CLI auto-detects: scaffold if no versions are configured,
+resolve otherwise.
+
+### Re-resolving
+
+The resolved matrix is timestamped. Subsequent runs within `freshness_ttl`
+seconds are skipped unless `--force` is passed. Stale `kja-*` flat gemfiles
+from previous runs are automatically cleaned up.
+
+### Example: sanitize_email (tier1-only)
+
+```yaml
+appraisal_matrix:
+  mode: semver
+  gems:
+    tier1:
+      - name: mail
+```
+
+Produces ~5 entries like `kja-mail-2-7-r2.4`, `kja-mail-2-8-r3`.
+
+### Example: omniauth-identity (tier1 + tier2)
+
+```yaml
+appraisal_matrix:
+  mode: semver
+  gems:
+    tier1:
+      - name: activerecord
+      - name: sequel
+        mode: major
+    tier2:
+      - name: omniauth
+```
+
+Produces entries like `kja-ar-7-1-oa-2-1-r3`, `kja-sq-5-0-oa-2-1-r3`.
+
+### Workflow strategy output
+
+The resolve step also generates CI lifecycle groupings:
+
+| Lifecycle | Description |
+|-----------|-------------|
+| `supported` | Current Ruby series (actively maintained) |
+| `legacy` | Older Ruby series (maintenance mode) |
+| `unsupported` | Ruby versions past EOL |
+| `ancient` | Very old Ruby (best-effort) |
+
+These map to separate GitHub Actions workflow files for tiered CI execution.
 
 ## 🦷 FLOSS Funding
 
