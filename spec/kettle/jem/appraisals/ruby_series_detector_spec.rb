@@ -9,8 +9,12 @@ RSpec.describe Kettle::Jem::Appraisals::RubySeriesDetector do
       # Mock versions list for latest_patch resolution
       allow(resolver).to receive(:versions).and_return(
         [
-          {number: "5.2.8"}, {number: "6.0.6"}, {number: "6.1.7"},
-          {number: "7.0.8"}, {number: "7.1.5"}, {number: "7.2.2"},
+          {number: "5.2.8"},
+          {number: "6.0.6"},
+          {number: "6.1.7"},
+          {number: "7.0.8"},
+          {number: "7.1.5"},
+          {number: "7.2.2"},
         ],
       )
     end

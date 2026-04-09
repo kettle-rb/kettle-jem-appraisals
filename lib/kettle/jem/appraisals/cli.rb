@@ -34,7 +34,7 @@ module Kettle
             run_resolve
           else
             $stderr.puts "Unknown mode: #{mode}"
-            exit 1
+            exit(1)
           end
         end
 
@@ -69,7 +69,7 @@ module Kettle
           gemspec_path = find_gemspec
           unless gemspec_path
             $stderr.puts "  ❌ No gemspec found in #{project_dir}"
-            exit 1
+            exit(1)
           end
 
           puts "  📦 Reading gemspec: #{File.basename(gemspec_path)}"
@@ -107,7 +107,7 @@ module Kettle
           matrix = config[APPRAISAL_MATRIX_KEY]
           unless matrix
             $stderr.puts "  ❌ No #{APPRAISAL_MATRIX_KEY} in #{CONFIG_FILE}. Run --scaffold first."
-            exit 1
+            exit(1)
           end
 
           # Check freshness TTL
@@ -123,7 +123,7 @@ module Kettle
 
           if tier1_gems.empty?
             $stderr.puts "  ❌ No tier1 gems configured. Run --scaffold first."
-            exit 1
+            exit(1)
           end
 
           resolver = GemVersionResolver.new
@@ -283,7 +283,7 @@ module Kettle
         # Extracts the project's min_ruby from its gemspec (used as a floor).
         def detect_project_min_ruby
           gemspec_path = find_gemspec
-          return nil unless gemspec_path
+          return unless gemspec_path
 
           content = File.read(gemspec_path)
           if (match = content.match(/required_ruby_version.*?>=.*?(\d+\.\d+)/))
@@ -307,8 +307,11 @@ module Kettle
 
             # Assign each tier1 version to its optimal bucket
             t1_assignments = builder.assign_version_buckets(
-              t1_name, t1_versions,
-              seams: t1_seams, buckets: ruby_series, bucket_ranges: bucket_ranges,
+              t1_name,
+              t1_versions,
+              seams: t1_seams,
+              buckets: ruby_series,
+              bucket_ranges: bucket_ranges,
             )
 
             if t1_assignments.empty?
@@ -343,8 +346,10 @@ module Kettle
                   sub_deps = sub_resolver.resolve(t1_name, t1_ver, ruby_min: ruby_min)
 
                   t1_gemfile = gemfile_gen.generate(
-                    gem_name: t1_name, version: t1_ver,
-                    ruby_series: rs, sub_deps: sub_deps,
+                    gem_name: t1_name,
+                    version: t1_ver,
+                    ruby_series: rs,
+                    sub_deps: sub_deps,
                   )
                   t2_gemfile = gemfile_gen.generate_tier2(
                     gem_name: t2_name, version: t2_ver, ruby_series: rs,

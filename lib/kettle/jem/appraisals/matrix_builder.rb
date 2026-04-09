@@ -91,11 +91,11 @@ module Kettle
             # We use the full seam list, not just selected versions.
             next_seam_ruby = find_next_seam_ruby(ver, ver_min_ruby, all_minors, version_min_ruby)
 
-            if next_seam_ruby
-              bucket = find_bucket_below(next_seam_ruby, buckets, bucket_ranges)
+            bucket = if next_seam_ruby
+              find_bucket_below(next_seam_ruby, buckets, bucket_ranges)
             else
               # This is in the latest seam range — catch-all bucket
-              bucket = buckets.last
+              buckets.last
             end
 
             assignments << {version: ver, bucket: bucket} if bucket

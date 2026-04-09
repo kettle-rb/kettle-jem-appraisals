@@ -45,7 +45,7 @@ module Kettle
         # requirement constraint and the Ruby series compatibility.
         def resolve_single(dep_name, requirements_str, ruby_min: nil)
           all = resolver.versions(dep_name)
-          return nil if all.empty?
+          return if all.empty?
 
           # Parse the requirement from the parent gem's dependency
           req = begin
@@ -56,7 +56,7 @@ module Kettle
 
           # Filter to versions satisfying the requirement
           compatible = all.select { |v| req.satisfied_by?(Gem::Version.new(v[:number])) }
-          return nil if compatible.empty?
+          return if compatible.empty?
 
           if ruby_min
             # Find the newest version compatible with the target Ruby

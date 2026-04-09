@@ -39,9 +39,9 @@ module Kettle
         # Uses the v2 API which has the dependencies structure.
         def version_info(gem_name, version)
           data = fetch_gem_info(gem_name, version)
-          return nil unless data
+          return unless data
 
-          deps = (data["dependencies"] || {})
+          deps = data["dependencies"] || {}
           runtime_deps = (deps["runtime"] || []).map { |d|
             {name: d["name"], requirements: d["requirements"]}
           }
@@ -60,7 +60,7 @@ module Kettle
         def min_ruby_version(gem_name, version)
           vers = versions(gem_name)
           entry = vers.find { |v| v[:number] == version }
-          return nil unless entry && entry[:ruby_version]
+          return unless entry && entry[:ruby_version]
 
           parse_min_ruby(entry[:ruby_version])
         end
@@ -104,14 +104,14 @@ module Kettle
 
           uri = URI("#{RUBYGEMS_V2_API_BASE}/#{gem_name}/versions/#{version}.json")
           response = Net::HTTP.get_response(uri)
-          return nil unless response.is_a?(Net::HTTPSuccess)
+          return unless response.is_a?(Net::HTTPSuccess)
 
           @cache[cache_key] = JSON.parse(response.body)
         end
 
         # Extracts the minimum Ruby version from a requirement string like ">= 2.7.0"
         def parse_min_ruby(requirement_str)
-          return nil if requirement_str.nil? || requirement_str.strip.empty?
+          return if requirement_str.nil? || requirement_str.strip.empty?
 
           req = Gem::Requirement.new(requirement_str)
           # Find the >= constraint and extract its version

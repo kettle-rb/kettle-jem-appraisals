@@ -163,7 +163,7 @@ module Kettle
                 else
                   # Named bucket rN.M where M = next_minor - 1
                   next_minor = sorted[idx + 1].split(".").last.to_i
-                  upper = next_minor > 0 ? next_minor - 1 : minor_num
+                  upper = (next_minor > 0) ? next_minor - 1 : minor_num
                   upper = [upper, minor_num].max
                   bucket = "r#{major}.#{upper}"
                   buckets << bucket unless buckets.include?(bucket)

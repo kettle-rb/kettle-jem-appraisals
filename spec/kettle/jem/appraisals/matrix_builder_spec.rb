@@ -91,8 +91,11 @@ RSpec.describe Kettle::Jem::Appraisals::MatrixBuilder do
       it "assigns each version to its optimal bucket and fills gaps" do
         selected = ["5.2", "6.1", "7.2"]
         result = builder.assign_version_buckets(
-          "test-gem", selected,
-          seams: seams, buckets: buckets, bucket_ranges: bucket_ranges,
+          "test-gem",
+          selected,
+          seams: seams,
+          buckets: buckets,
+          bucket_ranges: bucket_ranges,
         )
 
         version_buckets = result.map { |a| [a[:version], a[:bucket]] }
@@ -120,8 +123,11 @@ RSpec.describe Kettle::Jem::Appraisals::MatrixBuilder do
       it "assigns each version to its unique optimal bucket" do
         selected = ["5.0", "5.1", "5.2", "6.0", "6.1", "7.0", "7.1", "7.2"]
         result = builder.assign_version_buckets(
-          "test-gem", selected,
-          seams: seams, buckets: buckets, bucket_ranges: bucket_ranges,
+          "test-gem",
+          selected,
+          seams: seams,
+          buckets: buckets,
+          bucket_ranges: bucket_ranges,
         )
 
         # r2.4 should get a version from the 5.x range
@@ -141,16 +147,22 @@ RSpec.describe Kettle::Jem::Appraisals::MatrixBuilder do
     context "with empty inputs" do
       it "returns empty for no selected versions" do
         result = builder.assign_version_buckets(
-          "test-gem", [],
-          seams: seams, buckets: buckets, bucket_ranges: bucket_ranges,
+          "test-gem",
+          [],
+          seams: seams,
+          buckets: buckets,
+          bucket_ranges: bucket_ranges,
         )
         expect(result).to be_empty
       end
 
       it "returns empty for no buckets" do
         result = builder.assign_version_buckets(
-          "test-gem", ["5.2"],
-          seams: seams, buckets: [], bucket_ranges: {},
+          "test-gem",
+          ["5.2"],
+          seams: seams,
+          buckets: [],
+          bucket_ranges: {},
         )
         expect(result).to be_empty
       end
