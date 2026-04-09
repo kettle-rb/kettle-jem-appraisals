@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# vim: set syntax=ruby
+
+# kettle-jem-appraisals: Auto-generate Appraisal matrices for kettle-jem managed gems.
+# This script is installed into PATH when the kettle-jem-appraisals gem is installed.
+# It is designed to be run from inside the target gem's repository working directory.
+
+$stdout.sync = true
+$stderr.sync = true
+
+require "rubygems"
+
+begin
+  gem "kettle-jem-appraisals"
+  require "kettle/jem/appraisals"
+rescue Gem::MissingSpecError, LoadError => e
+  warn "[kettle-jem-appraisals] Failed to load: #{e.message}"
+  exit 1
+end
+
+Kettle::Jem::Appraisals::CLI.run(ARGV)
