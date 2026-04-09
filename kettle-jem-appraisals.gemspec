@@ -7,12 +7,6 @@
 # kettle-jem-appraisals will then preserve content between those markers across template runs.
 # kettle-jem:unfreeze
 
-# kettle-jem:freeze
-# To retain chunks of comments & code during kettle-jem templating:
-# Wrap custom sections with freeze markers (e.g., as above and below this comment chunk).
-# kettle-jem will then preserve content between those markers across template runs.
-# kettle-jem:unfreeze
-
 Gem::Specification.new do |spec|
   spec.name = "kettle-jem-appraisals"
   spec.version = Module.new.tap { |mod| Kernel.load("#{__dir__}/lib/kettle/jem/appraisals/version.rb", mod) }::Kettle::Jem::Appraisals::Version::VERSION
@@ -138,6 +132,7 @@ Gem::Specification.new do |spec|
   # /opt/hostedtoolcache/Ruby/2.3.8/x64/lib/ruby/gems/2.3.0/gems/erb-2.2.2/lib/erb.rb:670:in `prepare_trim_mode': undefined method `match?' for "-":String (NoMethodError)
   # spec.add_development_dependency("erb", ">= 2.2")                                  # ruby >= 2.3.0, not SemVer, old rubies get dropped in a patch.
   spec.add_development_dependency("gitmoji-regex", "~> 1.0", ">= 1.0.3")            # ruby >= 2.3.0
+
   # HTTP recording for deterministic specs
   # In Ruby 3.5 (HEAD) the CGI library has been pared down, so we also need to depend on gem "cgi" for ruby@head
   # This is done in the "head" appraisal.
