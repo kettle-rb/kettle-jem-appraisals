@@ -161,22 +161,35 @@ module Kettle
             puts "    📦 #{name} sub-deps: #{deps.keys.join(", ")}" unless deps.empty?
           end
 
-          # Detect Ruby series from gem version seams
+          # Detect Ruby series from ALL version seams (not just selected versions).
+          # The full seam set determines the bucket landscape — modes only affect
+          # which versions we TEST, not which Ruby ranges exist.
           series_detector = RubySeriesDetector.new(resolver: resolver)
           project_min_ruby = detect_project_min_ruby
-          ruby_series = series_detector.detect(tier1_gems, tier2_gems, project_min_ruby: project_min_ruby)
+
+          # Build full-version gem configs for seam detection
+          all_version_configs = (tier1_gems + tier2_gems).map { |gc|
+            all_minors = resolver.minor_versions_by_major(gc["name"]).flat_map { |e| e[:minors] }
+            {"name" => gc["name"], "versions" => all_minors}
+          }
+          detection = series_detector.detect_with_ranges(all_version_configs, [], project_min_ruby: project_min_ruby)
+          ruby_series = detection[:buckets]
+          bucket_ranges = detection[:bucket_ranges]
           puts "  🔴 Ruby series: #{ruby_series.join(", ")}"
 
-          # Show seam analysis
+          # Compute seams from ALL versions (for assignment) and show analysis
+          all_seams = {}
           (tier1_gems + tier2_gems).each do |gem_config|
-            seams = series_detector.find_seams(gem_config["name"], gem_config["versions"] || [])
+            all_minors = resolver.minor_versions_by_major(gem_config["name"]).flat_map { |e| e[:minors] }
+            seams = series_detector.find_seams(gem_config["name"], all_minors)
+            all_seams[gem_config["name"]] = seams
             next if seams.empty?
 
             seam_str = seams.map { |s| "#{s[:version]}→ruby≥#{s[:min_ruby]}" }.join(", ")
             puts "    🔗 #{gem_config["name"]} seams: #{seam_str}"
           end
 
-          appraisal_entries = build_matrix(tier1_gems, tier2_gems, ruby_series, resolver, gemfile_gen, sub_resolver)
+          appraisal_entries = build_matrix(tier1_gems, tier2_gems, ruby_series, bucket_ranges, all_seams, resolver, builder, gemfile_gen, sub_resolver)
 
           puts "  📊 Generated #{appraisal_entries.size} appraisal entries"
 
@@ -268,47 +281,74 @@ module Kettle
           end
         end
 
-        # Builds the full matrix: tier1 × tier2 × ruby_series
-        def build_matrix(tier1_gems, tier2_gems, ruby_series, resolver, gemfile_gen, sub_resolver)
+        # Builds the matrix using optimal bucket assignments.
+        # Instead of cross-producting all versions × all buckets, each tier1
+        # version is assigned to its optimal bucket (the newest Ruby where
+        # that version is the best choice).
+        #
+        # Tier2 versions are all compatible versions for each tier1's bucket.
+        def build_matrix(tier1_gems, tier2_gems, ruby_series, bucket_ranges, all_seams, resolver, builder, gemfile_gen, sub_resolver)
           entries = []
 
           tier1_gems.each do |t1|
             t1_name = t1["name"]
             t1_versions = t1["versions"] || []
+            t1_seams = all_seams[t1_name] || []
+
+            # Assign each tier1 version to its optimal bucket
+            t1_assignments = builder.assign_version_buckets(
+              t1_name, t1_versions,
+              seams: t1_seams, buckets: ruby_series, bucket_ranges: bucket_ranges,
+            )
+
+            if t1_assignments.empty?
+              puts "    ⚠️  No bucket assignments for #{t1_name}, falling back to latest bucket"
+              t1_assignments = t1_versions.map { |v| {version: v, bucket: ruby_series.last} }
+            end
+
+            # Show assignments
+            t1_assignments.each do |a|
+              label = a[:filler] ? " (filler)" : ""
+              puts "    📌 #{t1_name} #{a[:version]} → #{a[:bucket]}#{label}"
+            end
 
             tier2_gems.each do |t2|
               t2_name = t2["name"]
               t2_versions = t2["versions"] || []
 
-              t1_versions.each do |t1_ver|
-                t2_versions.each do |t2_ver|
-                  ruby_series.each do |rs|
-                    # Check compatibility — skip if neither gem can run on this Ruby
-                    next unless compatible?(t1_name, t1_ver, t2_name, t2_ver, rs, resolver)
+              t1_assignments.each do |t1_a|
+                t1_ver = t1_a[:version]
+                rs = t1_a[:bucket]
 
-                    # Resolve sub-deps for this combination
-                    ruby_min = ruby_series_min_version(rs)
-                    sub_deps = sub_resolver.resolve(t1_name, t1_ver, ruby_min: ruby_min)
+                # Find compatible tier2 versions for this bucket
+                compatible_t2 = t2_versions.select { |t2_ver|
+                  compatible?(t2_name, t2_ver, rs, bucket_ranges, resolver)
+                }
 
-                    # Generate modular gemfiles
-                    t1_gemfile = gemfile_gen.generate(
-                      gem_name: t1_name, version: t1_ver,
-                      ruby_series: rs, sub_deps: sub_deps,
-                    )
-                    t2_gemfile = gemfile_gen.generate_tier2(
-                      gem_name: t2_name, version: t2_ver, ruby_series: rs,
-                    )
+                # If no compatible tier2 versions, skip
+                next if compatible_t2.empty?
 
-                    x_std_libs_gemfile = "gemfiles/modular/x_std_libs/#{rs}/libs.gemfile"
+                compatible_t2.each do |t2_ver|
+                  ruby_min = bucket_ranges.dig(rs, :floor)
+                  sub_deps = sub_resolver.resolve(t1_name, t1_ver, ruby_min: ruby_min)
 
-                    entries << {
-                      name: GemAbbreviations.appraisal_name(t1_name, t1_ver, t2_name, t2_ver, rs),
-                      tier1_gemfile: t1_gemfile,
-                      tier2_gemfile: t2_gemfile,
-                      x_std_libs_gemfile: x_std_libs_gemfile,
-                      ruby_series: rs,
-                    }
-                  end
+                  t1_gemfile = gemfile_gen.generate(
+                    gem_name: t1_name, version: t1_ver,
+                    ruby_series: rs, sub_deps: sub_deps,
+                  )
+                  t2_gemfile = gemfile_gen.generate_tier2(
+                    gem_name: t2_name, version: t2_ver, ruby_series: rs,
+                  )
+
+                  x_std_libs_gemfile = "gemfiles/modular/x_std_libs/#{rs}/libs.gemfile"
+
+                  entries << {
+                    name: GemAbbreviations.appraisal_name(t1_name, t1_ver, t2_name, t2_ver, rs),
+                    tier1_gemfile: t1_gemfile,
+                    tier2_gemfile: t2_gemfile,
+                    x_std_libs_gemfile: x_std_libs_gemfile,
+                    ruby_series: rs,
+                  }
                 end
               end
             end
@@ -317,21 +357,18 @@ module Kettle
           entries
         end
 
-        # Checks if a tier1+tier2 combination is compatible with a Ruby series.
-        def compatible?(t1_name, t1_ver, t2_name, t2_ver, ruby_series, resolver)
-          rs_min = ruby_series_min_version(ruby_series)
-          return true unless rs_min
+        # Checks if a tier2 gem version is compatible with a Ruby series bucket.
+        def compatible?(gem_name, gem_ver, ruby_series, bucket_ranges, resolver)
+          range = bucket_ranges[ruby_series]
+          return true unless range
 
-          t1_ruby = resolver.min_ruby_version(t1_name, latest_minor_patch(t1_name, t1_ver, resolver))
-          t2_ruby = resolver.min_ruby_version(t2_name, latest_minor_patch(t2_name, t2_ver, resolver))
-
-          # If either gem requires a newer Ruby than the series provides, skip
-          return false if t1_ruby && t1_ruby > rs_min
-          return false if t2_ruby && t2_ruby > rs_min
+          gem_ruby = resolver.min_ruby_version(gem_name, latest_minor_patch(gem_name, gem_ver, resolver))
+          # If gem requires a Ruby newer than the bucket's ceiling, incompatible
+          return false if gem_ruby && gem_ruby > range[:ceiling]
 
           true
         rescue StandardError
-          true # If we can't determine, include it
+          true
         end
 
         def latest_minor_patch(gem_name, minor_version, resolver)
@@ -341,25 +378,6 @@ module Kettle
           return minor_version if matching.empty?
 
           matching.max_by { |v| Gem::Version.new(v[:number]) }[:number]
-        end
-
-        # Maps ruby series bucket names to minimum Ruby versions.
-        def ruby_series_min_version(ruby_series)
-          case ruby_series
-          when "r2.4" then Gem::Version.new("2.4")
-          when "r2.6" then Gem::Version.new("2.6")
-          when "r2" then Gem::Version.new("2.7")
-          when "r3.1" then Gem::Version.new("3.0")
-          when "r3" then Gem::Version.new("3.2")
-          when "r4" then Gem::Version.new("4.0")
-          else
-            match = ruby_series.match(/\Ar(\d+)(?:\.(\d+))?\z/)
-            return nil unless match
-
-            major = match[1].to_i
-            minor = match[2]&.to_i
-            Gem::Version.new(minor ? "#{major}.#{minor}" : "#{major}.0")
-          end
         end
       end
     end
