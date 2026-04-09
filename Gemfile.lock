@@ -91,7 +91,6 @@ GEM
       tree_haver (~> 6.0, >= 6.0.0)
       version_gem (~> 1.1, >= 1.1.9)
     kettle-dev (2.0.0)
-      version_gem (~> 1.1, >= 1.1.9)
     kettle-jem (1.0.0)
       ast-merge (~> 5.0, >= 5.0.0)
       bash-merge (~> 3.0)
@@ -419,7 +418,7 @@ DEPENDENCIES
   kettle-test (~> 1.0, >= 1.0.10)
   kramdown (~> 2.5, >= 2.5.1)
   kramdown-parser-gfm (~> 1.1)
-  markly (~> 0.15, >= 0.15.2)
+  markly (~> 0.15, >= 0.15.3)
   mutex_m (~> 0.2)
   parslet
   prism (~> 1.6)
@@ -481,11 +480,11 @@ CHECKSUMS
   irb (1.17.0) sha256=168c4ddb93d8a361a045c41d92b2952c7a118fa73f23fe14e55609eb7a863aae
   json (2.19.3) sha256=289b0bb53052a1fa8c34ab33cc750b659ba14a5c45f3fcf4b18762dc67c78646
   json-merge (2.0.0)
-  kettle-dev (2.0.0)
+  kettle-dev (2.0.0) sha256=f3cd1a2f8cc4f1fcc573d7e9177644873cfdfe455e26365416b4290ea09490b5
   kettle-jem (1.0.0)
   kettle-jem-appraisals (0.1.0)
-  kettle-soup-cover (1.1.1)
-  kettle-test (1.0.10)
+  kettle-soup-cover (1.1.1) sha256=2303885a9d8485d8d43cb250bcf73570f6b6fb997526beeaef3ef54e3501d445
+  kettle-test (1.0.10) sha256=ddefc5d54b290ee6dbe5a3983128f6948fa63f624ca676c1e6cfffc9b6878179
   kramdown (2.5.2) sha256=1ba542204c66b6f9111ff00dcc26075b95b220b07f2905d8261740c82f7f02fa
   kramdown-parser-gfm (1.1.0) sha256=fb39745516427d2988543bf01fc4cf0ab1149476382393e0e9c48592f6581729
   language_server-protocol (3.17.0.5) sha256=fd1e39a51a28bf3eec959379985a72e296e9f9acfce46f6a79d31ca8760803cc

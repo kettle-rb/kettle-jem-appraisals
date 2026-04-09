@@ -380,7 +380,7 @@ kettle-jem:
     "gemfiles/modular/stringio/vHEAD.gemfile.example": "e0497ab6dad9667b22725485b781e9d99349a079250eb29cb125d58f01f4a5be"
     "gemfiles/modular/style.gemfile.example": "7121e53e4a8f799804c6c4cea3bac7c7f7e89bf263b83e19fc5d4a554fa9f432"
     "gemfiles/modular/style_local.gemfile.example": "c0e0e5a8ed2a2349034e4ec60cdcbda265fbc1e092d3fcc1ae646b6e900237e1"
-    "gemfiles/modular/templating.gemfile.example": "1e23b434916614c5dcafe89f7044a7441b909c42337602a33a30d73c9e412ba0"
+    "gemfiles/modular/templating.gemfile.example": "f65421e4dead9f61e9d66155222b4c815ec30888aa9c48622d8861970c374620"
     "gemfiles/modular/templating_local.gemfile.example": "5fe0b6ed38137e869562f0a31c89225b786d49c3fbc0236c38ea20325dcb2036"
     "gemfiles/modular/x_std_libs.gemfile.example": "5cb837a90084deca54b9ecb7efe626d63db43476f649cb69cc89a8377198625a"
     "gemfiles/modular/x_std_libs/r2.3/libs.gemfile.example": "379ac2a3698615789e39dc18a961b9c793b2cc594856bb3163524a99fd4ac86f"
