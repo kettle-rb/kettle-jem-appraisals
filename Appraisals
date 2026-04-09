@@ -67,10 +67,6 @@ appraise "dep-heads" do
   eval_gemfile "modular/runtime_heads.gemfile"
 end
 
-appraise "ruby-3-1" do
-  eval_gemfile "modular/x_std_libs/r3.1/libs.gemfile"
-end
-
 appraise "ruby-3-2" do
   eval_gemfile "modular/x_std_libs/r3/libs.gemfile"
 end

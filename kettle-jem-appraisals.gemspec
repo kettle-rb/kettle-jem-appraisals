@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.description = "🍲 Kettle::Jem::Appraisals auto-generates CI test matrices from RubyGems API data. Scaffolds tier1/tier2 gem lists from gemspec, resolves version spreads per mode (major/minor/minor-minmax/semver), generates modular gemfiles and Appraisals files. Part of the kettle-rb ecosystem."
   spec.homepage = "https://github.com/kettle-rb/kettle-jem-appraisals"
   spec.licenses = ["MIT"]
-  spec.required_ruby_version = ">= 3.1.0"
+  spec.required_ruby_version = ">= 3.2.0"
 
   # Linux distros often package gems and securely certify them independent
   #   of the official RubyGem certification process. Allowed via ENV["SKIP_GEM_SIGNING"]
@@ -95,11 +95,11 @@ Gem::Specification.new do |spec|
   #       visibility and discoverability.
   #       However, development dependencies in gemspec will install on
   #       all versions of Ruby that will run in CI.
-  #       This gem, and its gemspec runtime dependencies, will install on Ruby down to 3.1.0.
-  #       This gem, and its gemspec development dependencies, will install on Ruby down to 3.1.0.
+  #       This gem, and its gemspec runtime dependencies, will install on Ruby down to 3.2.0.
+  #       This gem, and its gemspec development dependencies, will install on Ruby down to 3.2.0.
   #       Thus, dev dependencies in gemspec must have
   #
-  #       required_ruby_version ">= 3.1.0" (or lower)
+  #       required_ruby_version ">= 3.2.0" (or lower)
   #
   #       Development dependencies that require strictly newer Ruby versions should be in a "gemfile",
   #       and preferably a modular one (see gemfiles/modular/*.gemfile).
