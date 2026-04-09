@@ -140,11 +140,4 @@ Gem::Specification.new do |spec|
   # spec.add_development_dependency("vcr", ">= 4")                        # 6.0 claims to support ruby >= 2.3, but fails on ruby 2.4
   # spec.add_development_dependency("webmock", ">= 3")                    # Last version to support ruby >= 2.3
 
-  # kettle-jem:freeze
-  # Dev dependencies
-  spec.add_development_dependency("bundler-audit", "~> 0.9.3")
-  spec.add_development_dependency("rake", "~> 13.0")
-  spec.add_development_dependency("rspec", "~> 3.13")
-  spec.add_development_dependency("kettle-test", "~> 1.0", ">= 1.0.10")
-  # kettle-jem:unfreeze
 end
