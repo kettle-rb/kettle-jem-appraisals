@@ -59,6 +59,36 @@ RSpec.describe Kettle::Jem::Appraisals::MatrixBuilder do
       end
     end
 
+    context "with mode: semver and a large current major (>9 minors)" do
+      let(:large_minors) { (0..15).map { |i| "1.#{i}" } }
+      let(:large_by_major) do
+        [{major: 1, minors: large_minors}]
+      end
+
+      before do
+        allow(resolver).to receive(:minor_versions_by_major).and_return(large_by_major)
+        allow(resolver).to receive(:versions).and_return(
+          large_minors.map { |v| {number: "#{v}.0"} },
+        )
+        # Simulate a Ruby cutoff at 1.8 (min_ruby jumps from 2.5 to 2.7)
+        allow(resolver).to receive(:min_ruby_version) do |_gem, version|
+          minor = version.split(".")[1].to_i
+          if minor >= 8
+            Gem::Version.new("2.7")
+          else
+            Gem::Version.new("2.5")
+          end
+        end
+      end
+
+      it "prunes to latest minor + Ruby-cutoff minors only" do
+        result = builder.select_versions("big-gem", mode: "semver")
+        # 1.7 is the last before 1.8 bumps min_ruby → Ruby cutoff
+        # 1.15 is the latest minor
+        expect(result).to contain_exactly("1.7", "1.15")
+      end
+    end
+
     it "raises on invalid mode" do
       expect { builder.select_versions("test-gem", mode: "invalid") }
         .to raise_error(ArgumentError, /Invalid mode/)

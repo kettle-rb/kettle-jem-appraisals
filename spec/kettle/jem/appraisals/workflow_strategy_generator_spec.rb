@@ -17,11 +17,11 @@ RSpec.describe Kettle::Jem::Appraisals::WorkflowStrategyGenerator do
 
   let(:appraisal_entries) do
     [
-      {name: "ar-5-2-oa-1-r2.4", ruby_series: "r2.4", tier1_gemfile: "g1", tier2_gemfile: "g2", x_std_libs_gemfile: "g3"},
-      {name: "ar-6-1-oa-1-r2.6", ruby_series: "r2.6", tier1_gemfile: "g1", tier2_gemfile: "g2", x_std_libs_gemfile: "g3"},
-      {name: "ar-7-1-oa-2-r2", ruby_series: "r2", tier1_gemfile: "g1", tier2_gemfile: "g2", x_std_libs_gemfile: "g3"},
-      {name: "ar-7-2-oa-2-r3.1", ruby_series: "r3.1", tier1_gemfile: "g1", tier2_gemfile: "g2", x_std_libs_gemfile: "g3"},
-      {name: "ar-8-1-oa-2-r3", ruby_series: "r3", tier1_gemfile: "g1", tier2_gemfile: "g2", x_std_libs_gemfile: "g3"},
+      {name: "kja-ar-5-2-oa-1-r2.4", ruby_series: "r2.4", tier1_gemfile: "g1", tier2_gemfile: "g2", x_std_libs_gemfile: "g3"},
+      {name: "kja-ar-6-1-oa-1-r2.6", ruby_series: "r2.6", tier1_gemfile: "g1", tier2_gemfile: "g2", x_std_libs_gemfile: "g3"},
+      {name: "kja-ar-7-1-oa-2-r2", ruby_series: "r2", tier1_gemfile: "g1", tier2_gemfile: "g2", x_std_libs_gemfile: "g3"},
+      {name: "kja-ar-7-2-oa-2-r3.1", ruby_series: "r3.1", tier1_gemfile: "g1", tier2_gemfile: "g2", x_std_libs_gemfile: "g3"},
+      {name: "kja-ar-8-1-oa-2-r3", ruby_series: "r3", tier1_gemfile: "g1", tier2_gemfile: "g2", x_std_libs_gemfile: "g3"},
     ]
   end
 
@@ -65,7 +65,7 @@ RSpec.describe Kettle::Jem::Appraisals::WorkflowStrategyGenerator do
       supported = result["supported"]
       expect(supported.size).to eq(1)
       expect(supported.first[:ruby]).to eq("3.2")
-      expect(supported.first[:appraisal]).to eq("ar-8-1-oa-2-r3")
+      expect(supported.first[:appraisal]).to eq("kja-ar-8-1-oa-2-r3")
     end
 
     it "includes all required matrix entry fields" do
@@ -111,7 +111,7 @@ RSpec.describe Kettle::Jem::Appraisals::WorkflowStrategyGenerator do
     end
 
     let(:entries) do
-      [{name: "foo-1-r3", ruby_series: "r3", tier1_gemfile: "g", tier2_gemfile: "g", x_std_libs_gemfile: "g"}]
+      [{name: "kja-foo-1-r3", ruby_series: "r3", tier1_gemfile: "g", tier2_gemfile: "g", x_std_libs_gemfile: "g"}]
     end
 
     it "groups everything under current with 'ruby' alias" do

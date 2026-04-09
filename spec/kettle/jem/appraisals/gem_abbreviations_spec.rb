@@ -38,19 +38,19 @@ RSpec.describe Kettle::Jem::Appraisals::GemAbbreviations do
   end
 
   describe ".appraisal_name" do
-    it "builds a full appraisal name" do
+    it "builds a full appraisal name with kja prefix" do
       result = described_class.appraisal_name("activerecord", "7.1", "omniauth", "2.1", "r3")
-      expect(result).to eq("ar-7-1-oa-2-1-r3")
+      expect(result).to eq("kja-ar-7-1-oa-2-1-r3")
     end
 
     it "uses full name for unknown gems" do
       result = described_class.appraisal_name("my-adapter", "1.0", "omniauth", "2.0", "r3")
-      expect(result).to eq("my-adapter-1-0-oa-2-0-r3")
+      expect(result).to eq("kja-my-adapter-1-0-oa-2-0-r3")
     end
 
     it "builds a tier1-only name when tier2 is nil" do
       result = described_class.appraisal_name("mail", "2.8", nil, nil, "r3")
-      expect(result).to eq("mail-2-8-r3")
+      expect(result).to eq("kja-mail-2-8-r3")
     end
   end
 end

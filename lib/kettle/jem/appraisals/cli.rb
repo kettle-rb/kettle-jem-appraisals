@@ -2,6 +2,7 @@
 
 require "yaml"
 require "fileutils"
+require "set"
 
 module Kettle
   module Jem
@@ -203,6 +204,9 @@ module Kettle
             puts "    🔧 #{lifecycle}.yml: #{entries.size} matrix entries"
           end
 
+          # Clean up stale kja-* flat gemfiles from previous runs
+          cleanup_stale_gemfiles(appraisal_entries)
+
           # Write Appraisals file
           appraisals_content = AppraisalsGenerator.generate(appraisal_entries)
           appraisals_path = File.join(project_dir, "Appraisals")
@@ -226,6 +230,25 @@ module Kettle
         end
 
         # ── Helpers ──────────────────────────────────────────────────────
+
+        # Removes stale kja-* flat gemfiles from gemfiles/ that are no longer
+        # in the current matrix. Only touches files matching the PREFIX pattern.
+        def cleanup_stale_gemfiles(current_entries)
+          prefix = GemAbbreviations::PREFIX
+          gemfiles_dir = File.join(project_dir, "gemfiles")
+          return unless File.directory?(gemfiles_dir)
+
+          current_names = current_entries.map { |e| e[:name] }.to_set
+          stale = Dir.glob(File.join(gemfiles_dir, "#{prefix}-*.gemfile")).reject { |f|
+            basename = File.basename(f, ".gemfile")
+            current_names.include?(basename)
+          }
+
+          return if stale.empty?
+
+          stale.each { |f| FileUtils.rm_f(f) }
+          puts "  🗑️  Removed #{stale.size} stale gemfile(s)"
+        end
 
         def load_config
           path = File.join(project_dir, CONFIG_FILE)

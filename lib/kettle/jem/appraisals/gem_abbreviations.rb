@@ -4,9 +4,16 @@ module Kettle
   module Jem
     module Appraisals
       # Registry of common gem name abbreviations for appraisal naming.
-      # Format: `{tier1-abbrev}-{t1-version}-{tier2-abbrev}-{t2-version}-{ruby-series}`
-      # Example: `ar-7-1-oa-2-1-r3`
+      # All generated appraisal names are prefixed with +PREFIX+ so that
+      # regeneration can reliably identify and remove stale entries.
+      #
+      # Format: `kja-{tier1-abbrev}-{t1-version}-{tier2-abbrev}-{t2-version}-{ruby-series}`
+      # Example: `kja-ar-7-1-oa-2-1-r3`
       module GemAbbreviations
+        # Prefix applied to every generated appraisal name.
+        # Used to identify entries managed by kettle-jem-appraisals for cleanup.
+        PREFIX = "kja"
+
         ABBREVIATIONS = {
           "activerecord" => "ar",
           "actionmailer" => "am",
@@ -39,10 +46,17 @@ module Kettle
         end
 
         # Builds a full appraisal name from tier1, tier2, and ruby series components.
-        # Example: appraisal_name("activerecord", "7.1", "omniauth", "2.1", "r3")
-        #   => "ar-7-1-oa-2-1-r3"
+        # All names are prefixed with +PREFIX+ for reliable cleanup on regeneration.
+        #
+        # @example with tier2
+        #   appraisal_name("activerecord", "7.1", "omniauth", "2.1", "r3")
+        #   #=> "kja-ar-7-1-oa-2-1-r3"
+        # @example tier1 only
+        #   appraisal_name("mail", "2.8", nil, nil, "r3")
+        #   #=> "kja-mail-2-8-r3"
         def self.appraisal_name(tier1_gem, tier1_version, tier2_gem, tier2_version, ruby_series)
           parts = [
+            PREFIX,
             abbreviate(tier1_gem),
             format_version(tier1_version),
           ]

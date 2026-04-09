@@ -21,6 +21,10 @@ module Kettle
       class MatrixBuilder
         VALID_MODES = %w[major minor minor-minmax semver].freeze
 
+        # When a single major version has more than this many minor versions,
+        # semver mode prunes to only the latest minor + Ruby-cutoff minors.
+        LARGE_MAJOR_THRESHOLD = 9
+
         attr_reader :resolver
 
         def initialize(resolver:)
@@ -134,6 +138,16 @@ module Kettle
 
         # Last minor per major < current + minors where required_ruby_version changes
         # (natural Ruby cutoff points) + all minors of current major.
+        #
+        # For major versions with more than +LARGE_MAJOR_THRESHOLD+ minors,
+        # only the latest minor and Ruby-cutoff minors are kept. This prevents
+        # gems like +aws-sdk-dynamodb+ (166 minors in one major) from exploding
+        # the matrix.
+        #
+        # @param gem_name [String]
+        # @param by_major [Array<Hash>] from GemVersionResolver#minor_versions_by_major
+        # @param current_major [Integer]
+        # @return [Array<String>] selected version strings
         def select_semver(gem_name, by_major, current_major)
           versions = []
 
@@ -142,6 +156,11 @@ module Kettle
               versions << entry[:minors].last
               ruby_cutoff_versions = find_ruby_cutoff_versions(gem_name, entry[:minors])
               versions.concat(ruby_cutoff_versions)
+            elsif entry[:minors].size > LARGE_MAJOR_THRESHOLD
+              # Large current major: prune to latest + Ruby cutoffs only
+              ruby_cutoff_versions = find_ruby_cutoff_versions(gem_name, entry[:minors])
+              versions.concat(ruby_cutoff_versions)
+              versions << entry[:minors].last
             else
               versions.concat(entry[:minors])
             end
