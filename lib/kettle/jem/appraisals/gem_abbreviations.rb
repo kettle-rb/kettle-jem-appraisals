@@ -45,10 +45,12 @@ module Kettle
           parts = [
             abbreviate(tier1_gem),
             format_version(tier1_version),
-            abbreviate(tier2_gem),
-            format_version(tier2_version),
-            ruby_series,
           ]
+          if tier2_gem
+            parts << abbreviate(tier2_gem)
+            parts << format_version(tier2_version)
+          end
+          parts << ruby_series
           parts.join("-")
         end
       end

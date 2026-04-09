@@ -47,5 +47,10 @@ RSpec.describe Kettle::Jem::Appraisals::GemAbbreviations do
       result = described_class.appraisal_name("my-adapter", "1.0", "omniauth", "2.0", "r3")
       expect(result).to eq("my-adapter-1-0-oa-2-0-r3")
     end
+
+    it "builds a tier1-only name when tier2 is nil" do
+      result = described_class.appraisal_name("mail", "2.8", nil, nil, "r3")
+      expect(result).to eq("mail-2-8-r3")
+    end
   end
 end

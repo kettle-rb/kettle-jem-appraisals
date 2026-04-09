@@ -325,45 +325,72 @@ module Kettle
               puts "    📌 #{t1_name} #{a[:version]} → #{a[:bucket]}#{label}"
             end
 
-            tier2_gems.each do |t2|
-              t2_name = t2["name"]
-              t2_versions = t2["versions"] || []
-
+            if tier2_gems.empty?
+              # Tier1-only entries (no tier2 cross)
               t1_assignments.each do |t1_a|
                 t1_ver = t1_a[:version]
                 rs = t1_a[:bucket]
+                ruby_min = bucket_ranges.dig(rs, :floor)
+                sub_deps = sub_resolver.resolve(t1_name, t1_ver, ruby_min: ruby_min)
 
-                # Find compatible tier2 versions for this bucket
-                compatible_t2 = t2_versions.select { |t2_ver|
-                  compatible?(t2_name, t2_ver, rs, bucket_ranges, resolver)
+                t1_gemfile = gemfile_gen.generate(
+                  gem_name: t1_name,
+                  version: t1_ver,
+                  ruby_series: rs,
+                  sub_deps: sub_deps,
+                )
+
+                x_std_libs_gemfile = "gemfiles/modular/x_std_libs/#{rs}/libs.gemfile"
+
+                entries << {
+                  name: GemAbbreviations.appraisal_name(t1_name, t1_ver, nil, nil, rs),
+                  tier1_gemfile: t1_gemfile,
+                  tier2_gemfile: nil,
+                  x_std_libs_gemfile: x_std_libs_gemfile,
+                  ruby_series: rs,
                 }
+              end
+            else
+              tier2_gems.each do |t2|
+                t2_name = t2["name"]
+                t2_versions = t2["versions"] || []
 
-                # If no compatible tier2 versions, skip
-                next if compatible_t2.empty?
+                t1_assignments.each do |t1_a|
+                  t1_ver = t1_a[:version]
+                  rs = t1_a[:bucket]
 
-                compatible_t2.each do |t2_ver|
-                  ruby_min = bucket_ranges.dig(rs, :floor)
-                  sub_deps = sub_resolver.resolve(t1_name, t1_ver, ruby_min: ruby_min)
-
-                  t1_gemfile = gemfile_gen.generate(
-                    gem_name: t1_name,
-                    version: t1_ver,
-                    ruby_series: rs,
-                    sub_deps: sub_deps,
-                  )
-                  t2_gemfile = gemfile_gen.generate_tier2(
-                    gem_name: t2_name, version: t2_ver, ruby_series: rs,
-                  )
-
-                  x_std_libs_gemfile = "gemfiles/modular/x_std_libs/#{rs}/libs.gemfile"
-
-                  entries << {
-                    name: GemAbbreviations.appraisal_name(t1_name, t1_ver, t2_name, t2_ver, rs),
-                    tier1_gemfile: t1_gemfile,
-                    tier2_gemfile: t2_gemfile,
-                    x_std_libs_gemfile: x_std_libs_gemfile,
-                    ruby_series: rs,
+                  # Find compatible tier2 versions for this bucket
+                  compatible_t2 = t2_versions.select { |t2_ver|
+                    compatible?(t2_name, t2_ver, rs, bucket_ranges, resolver)
                   }
+
+                  # If no compatible tier2 versions, skip
+                  next if compatible_t2.empty?
+
+                  compatible_t2.each do |t2_ver|
+                    ruby_min = bucket_ranges.dig(rs, :floor)
+                    sub_deps = sub_resolver.resolve(t1_name, t1_ver, ruby_min: ruby_min)
+
+                    t1_gemfile = gemfile_gen.generate(
+                      gem_name: t1_name,
+                      version: t1_ver,
+                      ruby_series: rs,
+                      sub_deps: sub_deps,
+                    )
+                    t2_gemfile = gemfile_gen.generate_tier2(
+                      gem_name: t2_name, version: t2_ver, ruby_series: rs,
+                    )
+
+                    x_std_libs_gemfile = "gemfiles/modular/x_std_libs/#{rs}/libs.gemfile"
+
+                    entries << {
+                      name: GemAbbreviations.appraisal_name(t1_name, t1_ver, t2_name, t2_ver, rs),
+                      tier1_gemfile: t1_gemfile,
+                      tier2_gemfile: t2_gemfile,
+                      x_std_libs_gemfile: x_std_libs_gemfile,
+                      ruby_series: rs,
+                    }
+                  end
                 end
               end
             end
