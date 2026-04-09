@@ -18,6 +18,7 @@ module Kettle
       autoload :AppraisalsGenerator, "kettle/jem/appraisals/appraisals_generator"
       autoload :RubySeriesDetector, "kettle/jem/appraisals/ruby_series_detector"
       autoload :SubDepResolver, "kettle/jem/appraisals/sub_dep_resolver"
+      autoload :WorkflowStrategyGenerator, "kettle/jem/appraisals/workflow_strategy_generator"
       autoload :XStdLibsExclusion, "kettle/jem/appraisals/x_std_libs_exclusion"
     end
   end

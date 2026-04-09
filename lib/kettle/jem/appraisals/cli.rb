@@ -193,6 +193,16 @@ module Kettle
 
           puts "  📊 Generated #{appraisal_entries.size} appraisal entries"
 
+          # Generate workflow strategy matrix snippets
+          workflow_gen = WorkflowStrategyGenerator.new(
+            bucket_ranges: bucket_ranges,
+            exec_cmd: matrix.dig("exec_cmd") || "rake spec",
+          )
+          workflow_groups = workflow_gen.generate(appraisal_entries)
+          workflow_groups.each do |lifecycle, entries|
+            puts "    🔧 #{lifecycle}.yml: #{entries.size} matrix entries"
+          end
+
           # Write Appraisals file
           appraisals_content = AppraisalsGenerator.generate(appraisal_entries)
           appraisals_path = File.join(project_dir, "Appraisals")
