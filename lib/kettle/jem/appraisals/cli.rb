@@ -102,7 +102,7 @@ module Kettle
           puts "🍲 kettle-jem-appraisals: scaffold mode"
           gemspec_path = find_gemspec
           unless gemspec_path
-            $stderr.puts "  ❌ No gemspec found in #{project_dir}"
+            $stderr.puts "  ❌ No gemspec found in #{Kettle::Jem::Appraisals.display_path(project_dir)}"
             exit(1)
           end
 
@@ -282,7 +282,7 @@ module Kettle
           appraisals_content = AppraisalsGenerator.generate(appraisal_entries)
           appraisals_path = File.join(project_dir, "Appraisals")
           File.write(appraisals_path, appraisals_content)
-          puts "  📝 Wrote #{appraisals_path}"
+          puts "  📝 Wrote #{Kettle::Jem::Appraisals.display_path(appraisals_path)}"
 
           # Update config with resolved_at timestamp
           matrix["resolved_at"] = Time.now.to_i

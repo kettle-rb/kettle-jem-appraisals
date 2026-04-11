@@ -10,6 +10,16 @@ end
 module Kettle
   module Jem
     module Appraisals
+      VAR_HOME_PREFIX = %r{\A/var/home(?=/|\z)}
+
+      module_function
+
+      def display_path(path)
+        return path if path.nil?
+
+        path.to_s.sub(VAR_HOME_PREFIX, "/home")
+      end
+
       autoload :CLI, "kettle/jem/appraisals/cli"
       autoload :GemAbbreviations, "kettle/jem/appraisals/gem_abbreviations"
       autoload :GemVersionResolver, "kettle/jem/appraisals/gem_version_resolver"
