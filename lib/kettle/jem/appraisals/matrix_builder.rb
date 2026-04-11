@@ -18,7 +18,7 @@ module Kettle
       #   # AR 8.1 (min_ruby=3.2) → optimal on r3   (catch-all, latest)
       class MatrixBuilder
         # @return [Array<String>] valid mode strings accepted by {#select_versions}
-        VALID_MODES = %w[major minor minor-minmax semver].freeze
+        VALID_MODES = %w[major minor patch minor-minmax semver].freeze
 
         # @return [Integer] when a single major version has more than this many minor
         #   versions, semver mode prunes to only the latest minor + Ruby-cutoff minors
@@ -35,16 +35,20 @@ module Kettle
         # Returns selected version strings for a gem according to the mode.
         #
         # @param gem_name [String] the RubyGems gem name
-        # @param mode [String] one of {VALID_MODES}: +"major"+, +"minor"+, +"minor-minmax"+, or +"semver"+
+        # @param mode [String] one of {VALID_MODES}: +"major"+, +"minor"+, +"patch"+, +"minor-minmax"+, or +"semver"+
         # @return [Array<String>] selected minor version strings (e.g., +["5.2", "6.0", "7.1"]+)
         # @raise [ArgumentError] if +mode+ is not in {VALID_MODES}
         # @example
         #   builder.select_versions("activerecord", mode: "semver")
         #   #=> ["5.2", "6.0", "6.1", "7.0", "7.1", "7.2", "8.0"]
-        def select_versions(gem_name, mode:)
+        def select_versions(gem_name, mode:, requirements: nil)
           raise ArgumentError, "Invalid mode: #{mode}. Must be one of: #{VALID_MODES.join(", ")}" unless VALID_MODES.include?(mode)
 
-          by_major = resolver.minor_versions_by_major(gem_name)
+          if mode == "patch"
+            return select_patch(gem_name, requirements: requirements)
+          end
+
+          by_major = resolver.minor_versions_by_major(gem_name, requirements: requirements)
           return [] if by_major.empty?
 
           current_major = by_major.last[:major]
@@ -54,10 +58,12 @@ module Kettle
             select_major(by_major)
           when "minor"
             select_minor(by_major)
+          when "patch"
+            select_patch(gem_name, requirements: requirements)
           when "minor-minmax"
             select_minor_minmax(by_major, current_major)
           when "semver"
-            select_semver(gem_name, by_major, current_major)
+            select_semver(gem_name, by_major, current_major, requirements: requirements)
           end
         end
 
@@ -82,13 +88,13 @@ module Kettle
         #   builder.assign_version_buckets("activerecord", ["6.1", "7.2"],
         #     seams: seams, buckets: ["r2", "r3.1", "r3"], bucket_ranges: ranges)
         #   #=> [{version: "6.1", bucket: "r2"}, {version: "7.2", bucket: "r3.1"}, ...]
-        def assign_version_buckets(gem_name, selected_versions, seams:, buckets:, bucket_ranges:)
+        def assign_version_buckets(gem_name, selected_versions, seams:, buckets:, bucket_ranges:, all_versions: nil)
           return [] if selected_versions.empty? || buckets.empty?
 
           # Build a lookup: version → min_ruby from seams
           # For versions between seams, inherit the previous seam's min_ruby
-          all_minors = resolver.minor_versions_by_major(gem_name).flat_map { |e| e[:minors] }
-          version_min_ruby = compute_version_min_rubies(all_minors, seams)
+          all_versions ||= resolver.minor_versions_by_major(gem_name).flat_map { |e| e[:minors] }
+          version_min_ruby = compute_version_min_rubies(all_versions, seams)
 
           # For each selected version, find which bucket it's optimal for.
           # "Optimal" = the bucket whose ceiling is just below the NEXT SEAM
@@ -104,7 +110,7 @@ module Kettle
             # Find the next seam boundary AFTER this version's min_ruby.
             # This is the min_ruby where a NEWER version of this gem takes over.
             # We use the full seam list, not just selected versions.
-            next_seam_ruby = find_next_seam_ruby(ver, ver_min_ruby, all_minors, version_min_ruby)
+            next_seam_ruby = find_next_seam_ruby(ver, ver_min_ruby, all_versions, version_min_ruby)
 
             bucket = if next_seam_ruby
               find_bucket_below(next_seam_ruby, buckets, bucket_ranges)
@@ -117,7 +123,7 @@ module Kettle
           end
 
           # Handle filler: fill gaps where buckets have no assigned version
-          fill_bucket_gaps(assignments, selected_sorted, version_min_ruby, buckets, bucket_ranges, all_minors)
+          fill_bucket_gaps(assignments, selected_sorted, version_min_ruby, buckets, bucket_ranges, all_versions)
         end
 
         private
@@ -130,6 +136,11 @@ module Kettle
         # Every minor version across all supported majors.
         def select_minor(by_major)
           by_major.flat_map { |entry| entry[:minors] }
+        end
+
+        # Every matching patch version across all supported majors.
+        def select_patch(gem_name, requirements: nil)
+          resolver.versions(gem_name, requirements: requirements).map { |entry| entry[:number] }
         end
 
         # First + last minor per major < current; all minors of current major.
@@ -159,17 +170,17 @@ module Kettle
         # @param by_major [Array<Hash>] from GemVersionResolver#minor_versions_by_major
         # @param current_major [Integer]
         # @return [Array<String>] selected version strings
-        def select_semver(gem_name, by_major, current_major)
+        def select_semver(gem_name, by_major, current_major, requirements: nil)
           versions = []
 
           by_major.each do |entry|
             if entry[:major] < current_major
               versions << entry[:minors].last
-              ruby_cutoff_versions = find_ruby_cutoff_versions(gem_name, entry[:minors])
+              ruby_cutoff_versions = find_ruby_cutoff_versions(gem_name, entry[:minors], requirements: requirements)
               versions.concat(ruby_cutoff_versions)
             elsif entry[:minors].size > LARGE_MAJOR_THRESHOLD
               # Large current major: prune to latest + Ruby cutoffs only
-              ruby_cutoff_versions = find_ruby_cutoff_versions(gem_name, entry[:minors])
+              ruby_cutoff_versions = find_ruby_cutoff_versions(gem_name, entry[:minors], requirements: requirements)
               versions.concat(ruby_cutoff_versions)
               versions << entry[:minors].last
             else
@@ -183,14 +194,14 @@ module Kettle
         # Finds versions where the following version drops support for a Ruby version
         # that the current version supports. These are natural cutoff points.
         # Returns the version *before* the drop (the last to support the Ruby version).
-        def find_ruby_cutoff_versions(gem_name, minor_versions)
+        def find_ruby_cutoff_versions(gem_name, minor_versions, requirements: nil)
           return [] if minor_versions.size < 2
 
           cutoffs = []
           prev_ruby = nil
 
           minor_versions.each do |version|
-            current_ruby = resolver.min_ruby_version(gem_name, latest_patch(gem_name, version))
+            current_ruby = resolver.min_ruby_version(gem_name, latest_patch(gem_name, version, requirements: requirements))
             if prev_ruby && current_ruby && current_ruby > prev_ruby
               cutoffs << minor_versions[minor_versions.index(version) - 1]
             end
@@ -312,8 +323,8 @@ module Kettle
         end
 
         # Finds the latest patch release for a given minor version.
-        def latest_patch(gem_name, minor_version)
-          all_versions = resolver.versions(gem_name)
+        def latest_patch(gem_name, minor_version, requirements: nil)
+          all_versions = resolver.versions(gem_name, requirements: requirements)
           prefix = "#{minor_version}."
           matching = all_versions.select { |v| v[:number].start_with?(prefix) || v[:number] == minor_version }
           return minor_version if matching.empty?

@@ -49,7 +49,7 @@ module Kettle
         # @param gem_name [String] the RubyGems gem name
         # @param include_prerelease [Boolean] when +true+, includes pre-release versions (default: +false+)
         # @return [Array<Hash>] version hashes sorted by +Gem::Version+
-        def versions(gem_name, include_prerelease: false)
+        def versions(gem_name, include_prerelease: false, requirements: nil)
           raw = fetch_versions(gem_name)
           versions = raw.map { |v|
             {
@@ -60,6 +60,10 @@ module Kettle
             }
           }
           versions = versions.reject { |v| v[:prerelease] } unless include_prerelease
+          requirement = normalize_requirements(requirements)
+          if requirement
+            versions = versions.select { |v| requirement.satisfied_by?(Gem::Version.new(v[:number])) }
+          end
           versions.sort_by { |v| Gem::Version.new(v[:number]) }
         end
 
@@ -105,8 +109,8 @@ module Kettle
         # @example
         #   resolver.minor_versions_by_major("activerecord")
         #   #=> [{major: 6, minors: ["6.0", "6.1"]}, {major: 7, minors: ["7.0", "7.1", "7.2"]}]
-        def minor_versions_by_major(gem_name)
-          vers = versions(gem_name)
+        def minor_versions_by_major(gem_name, requirements: nil)
+          vers = versions(gem_name, requirements: requirements)
           grouped = {}
           vers.each do |v|
             gv = Gem::Version.new(v[:number])
@@ -141,6 +145,15 @@ module Kettle
         # Delegates requirement string parsing to the floor resolver.
         def parse_min_ruby(requirement_str)
           floor_resolver.parse_min_ruby(requirement_str)
+        end
+
+        def normalize_requirements(requirements)
+          return if requirements.nil?
+
+          values = Array(requirements).flatten.compact.map(&:to_s).map(&:strip).reject(&:empty?)
+          return if values.empty?
+
+          Gem::Requirement.new(values)
         end
       end
     end

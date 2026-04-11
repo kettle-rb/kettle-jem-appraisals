@@ -40,6 +40,18 @@ RSpec.describe Kettle::Jem::Appraisals::RubySeriesDetector do
     it "returns empty for no versions" do
       expect(detector.find_seams("foo", [])).to eq([])
     end
+
+    it "accepts exact patch versions when patch mode provides them" do
+      allow(resolver).to receive(:min_ruby_version).with("activerecord", "7.1.0").and_return(Gem::Version.new("3.0"))
+      allow(resolver).to receive(:min_ruby_version).with("activerecord", "7.1.1").and_return(Gem::Version.new("3.2"))
+
+      seams = detector.find_seams("activerecord", ["7.1.0", "7.1.1"])
+
+      expect(seams).to eq([
+        {version: "7.1.0", min_ruby: Gem::Version.new("3.0")},
+        {version: "7.1.1", min_ruby: Gem::Version.new("3.2")},
+      ])
+    end
   end
 
   describe "#detect" do

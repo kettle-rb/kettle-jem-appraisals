@@ -42,5 +42,12 @@ RSpec.describe Kettle::Jem::Appraisals::ModularGemfileGenerator do
       content = File.read(full_path)
       expect(content).to include('gem "omniauth", "~> 2.1.0"')
     end
+
+    it "keeps exact patch requirements intact" do
+      path = generator.generate_tier2(gem_name: "omniauth", version: "2.1.3", ruby_series: "r3")
+
+      content = File.read(File.join(tmpdir, path))
+      expect(content).to include('gem "omniauth", "~> 2.1.3"')
+    end
   end
 end

@@ -31,6 +31,19 @@ RSpec.describe Kettle::Jem::Appraisals::MatrixBuilder do
       end
     end
 
+    context "with mode: patch" do
+      before do
+        allow(resolver).to receive(:versions)
+          .with("test-gem", requirements: [">= 6.1", "< 7.0"])
+          .and_return([{number: "6.1.0"}, {number: "6.1.1"}])
+      end
+
+      it "returns matching patch versions" do
+        result = builder.select_versions("test-gem", mode: "patch", requirements: [">= 6.1", "< 7.0"])
+        expect(result).to eq(["6.1.0", "6.1.1"])
+      end
+    end
+
     context "with mode: minor-minmax" do
       it "returns first+last for older majors, all for current" do
         result = builder.select_versions("test-gem", mode: "minor-minmax")
@@ -195,6 +208,31 @@ RSpec.describe Kettle::Jem::Appraisals::MatrixBuilder do
           bucket_ranges: {},
         )
         expect(result).to be_empty
+      end
+    end
+
+    context "with patch versions and explicit all_versions" do
+      let(:patch_seams) do
+        [
+          {version: "7.1.0", min_ruby: Gem::Version.new("3.0")},
+          {version: "7.1.1", min_ruby: Gem::Version.new("3.2")},
+        ]
+      end
+
+      it "assigns exact patch versions when patch mode is used" do
+        result = builder.assign_version_buckets(
+          "test-gem",
+          ["7.1.0", "7.1.1"],
+          seams: patch_seams,
+          buckets: ["r3.1", "r3"],
+          bucket_ranges: {
+            "r3.1" => {floor: Gem::Version.new("3.0"), ceiling: Gem::Version.new("3.1")},
+            "r3" => {floor: Gem::Version.new("3.2"), ceiling: Gem::Version.new("3.99")},
+          },
+          all_versions: ["7.1.0", "7.1.1"],
+        )
+
+        expect(result.map { |entry| [entry[:version], entry[:bucket]] }).to include(["7.1.1", "r3"])
       end
     end
   end

@@ -167,8 +167,12 @@ module Kettle
           tier1_gems.each do |gem_config|
             name = gem_config["name"]
             mode = gem_config["mode"] || gems_config.dig("tier1_mode") || global_mode
+            requirements = gem_requirements(gem_config)
+            include_versions = gem_include_versions(gem_config)
+            exclude_versions = gem_exclude_versions(gem_config)
             puts "  🔄 Resolving #{name} (mode: #{mode})..."
-            gem_config["versions"] = builder.select_versions(name, mode: mode)
+            selected_versions = builder.select_versions(name, mode: mode, requirements: requirements)
+            gem_config["versions"] = finalize_versions(selected_versions, include_versions, exclude_versions)
             puts "    → #{gem_config["versions"].size} versions: #{gem_config["versions"].join(", ")}"
           end
 
@@ -176,8 +180,12 @@ module Kettle
           tier2_gems.each do |gem_config|
             name = gem_config["name"]
             mode = gem_config["mode"] || gems_config.dig("tier2_mode") || global_mode
+            requirements = gem_requirements(gem_config)
+            include_versions = gem_include_versions(gem_config)
+            exclude_versions = gem_exclude_versions(gem_config)
             puts "  🔄 Resolving #{name} (mode: #{mode})..."
-            gem_config["versions"] = builder.select_versions(name, mode: mode)
+            selected_versions = builder.select_versions(name, mode: mode, requirements: requirements)
+            gem_config["versions"] = finalize_versions(selected_versions, include_versions, exclude_versions)
             puts "    → #{gem_config["versions"].size} versions: #{gem_config["versions"].join(", ")}"
           end
 
@@ -200,9 +208,26 @@ module Kettle
           project_min_ruby = detect_project_min_ruby
 
           # Build full-version gem configs for seam detection
+          all_versions_by_gem = {}
           all_version_configs = (tier1_gems + tier2_gems).map { |gc|
-            all_minors = resolver.minor_versions_by_major(gc["name"]).flat_map { |e| e[:minors] }
-            {"name" => gc["name"], "versions" => all_minors}
+            mode = gc["mode"] || if tier1_gems.include?(gc)
+              gems_config.dig("tier1_mode") || global_mode
+            else
+              gems_config.dig("tier2_mode") || global_mode
+            end
+            requirements = gem_requirements(gc)
+            include_versions = gem_include_versions(gc)
+            exclude_versions = gem_exclude_versions(gc)
+            all_versions = all_versions_for(
+              resolver,
+              gc["name"],
+              mode: mode,
+              requirements: requirements,
+              include_versions: include_versions,
+              exclude_versions: exclude_versions,
+            )
+            all_versions_by_gem[gc["name"]] = all_versions
+            {"name" => gc["name"], "versions" => all_versions}
           }
           detection = series_detector.detect_with_ranges(all_version_configs, [], project_min_ruby: project_min_ruby)
           ruby_series = detection[:buckets]
@@ -212,8 +237,8 @@ module Kettle
           # Compute seams from ALL versions (for assignment) and show analysis
           all_seams = {}
           (tier1_gems + tier2_gems).each do |gem_config|
-            all_minors = resolver.minor_versions_by_major(gem_config["name"]).flat_map { |e| e[:minors] }
-            seams = series_detector.find_seams(gem_config["name"], all_minors)
+            all_versions = all_versions_by_gem[gem_config["name"]] || []
+            seams = series_detector.find_seams(gem_config["name"], all_versions)
             all_seams[gem_config["name"]] = seams
             next if seams.empty?
 
@@ -221,7 +246,18 @@ module Kettle
             puts "    🔗 #{gem_config["name"]} seams: #{seam_str}"
           end
 
-          appraisal_entries = build_matrix(tier1_gems, tier2_gems, ruby_series, bucket_ranges, all_seams, resolver, builder, gemfile_gen, sub_resolver)
+          appraisal_entries = build_matrix(
+            tier1_gems,
+            tier2_gems,
+            ruby_series,
+            bucket_ranges,
+            all_seams,
+            all_versions_by_gem,
+            resolver,
+            builder,
+            gemfile_gen,
+            sub_resolver,
+          )
 
           puts "  📊 Generated #{appraisal_entries.size} appraisal entries"
 
@@ -351,7 +387,7 @@ module Kettle
         # that version is the best choice).
         #
         # Tier2 versions are all compatible versions for each tier1's bucket.
-        def build_matrix(tier1_gems, tier2_gems, ruby_series, bucket_ranges, all_seams, resolver, builder, gemfile_gen, sub_resolver)
+        def build_matrix(tier1_gems, tier2_gems, ruby_series, bucket_ranges, all_seams, all_versions_by_gem, resolver, builder, gemfile_gen, sub_resolver)
           entries = []
 
           tier1_gems.each do |t1|
@@ -366,6 +402,7 @@ module Kettle
               seams: t1_seams,
               buckets: ruby_series,
               bucket_ranges: bucket_ranges,
+              all_versions: all_versions_by_gem[t1_name],
             )
 
             if t1_assignments.empty?
@@ -474,6 +511,75 @@ module Kettle
           return minor_version if matching.empty?
 
           matching.max_by { |v| Gem::Version.new(v[:number]) }[:number]
+        end
+
+        def gem_requirements(gem_config)
+          values = [gem_config["requirements"]]
+            .flatten
+            .compact
+            .flat_map { |value| value.is_a?(Array) ? value : [value] }
+            .map(&:to_s)
+            .map(&:strip)
+            .reject(&:empty?)
+          return if values.empty?
+
+          values
+        end
+
+        def gem_include_versions(gem_config)
+          values = [gem_config["include_versions"]]
+            .flatten
+            .compact
+            .flat_map { |value| value.is_a?(Array) ? value : [value] }
+            .map(&:to_s)
+            .map(&:strip)
+            .reject(&:empty?)
+          return if values.empty?
+
+          sort_versions(values)
+        end
+
+        def gem_exclude_versions(gem_config)
+          values = [gem_config["exclude_versions"]]
+            .flatten
+            .compact
+            .flat_map { |value| value.is_a?(Array) ? value : [value] }
+            .map(&:to_s)
+            .map(&:strip)
+            .reject(&:empty?)
+          return if values.empty?
+
+          sort_versions(values)
+        end
+
+        def all_versions_for(resolver, gem_name, mode:, requirements: nil, include_versions: nil, exclude_versions: nil)
+          base = if mode == "patch"
+            resolver.versions(gem_name, requirements: requirements).map { |entry| entry[:number] }
+          else
+            resolver.minor_versions_by_major(gem_name, requirements: requirements).flat_map { |entry| entry[:minors] }
+          end
+
+          finalize_versions(base, include_versions, exclude_versions)
+        end
+
+        def merge_versions(base_versions, include_versions)
+          sort_versions(Array(base_versions) + Array(include_versions))
+        end
+
+        def finalize_versions(base_versions, include_versions, exclude_versions)
+          merged = merge_versions(base_versions, include_versions)
+          subtract_versions(merged, exclude_versions)
+        end
+
+        def subtract_versions(base_versions, exclude_versions)
+          excluded = Array(exclude_versions).to_set
+          return sort_versions(base_versions) if excluded.empty?
+
+          sort_versions(Array(base_versions).reject { |version| excluded.include?(version) })
+        end
+
+        def sort_versions(values)
+          values.compact.uniq.sort_by { |version| Gem::Version.new(version) }
         end
       end
     end

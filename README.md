@@ -37,25 +37,31 @@ seam points (where `required_ruby_version` changes), and produces:
 - An **Appraisals** file for use with [appraisal2](https://github.com/appraisal-rb/appraisal2)
 - **Workflow strategy** matrix snippets for GitHub Actions CI
 
+If you want a lighter-weight DSL for the original
+[`appraisal`](https://github.com/thoughtbot/appraisal) gem, consider
+[`appraisal-matrix`](https://github.com/invoca/appraisal-matrix) instead.
+`kettle-jem-appraisals` targets **`appraisal2`** (which supports `eval_gemfile`, and all ruby versions), while `appraisal-matrix`
+targets **`appraisal`** (which does not support `eval_gemfile`, and only supports modern ruby).
+
 ### Key concepts
 
-| Concept | Description |
-|---------|-------------|
-| **Tier 1** | Primary runtime dependencies whose version matrix you test against (e.g. `activerecord`, `mail`) |
-| **Tier 2** | Secondary runtime dependencies cross-producted with tier 1 (e.g. `omniauth`) |
-| **Ruby series** | Buckets like `r2.4`, `r2.6`, `r2`, `r3.1`, `r3` derived from min-ruby seam analysis |
-| **Seam** | A version boundary where a gem's `required_ruby_version` floor increases |
-| **Mode** | Version selection strategy: `major`, `minor`, `minor-minmax`, or `semver` |
-| **`kja-` prefix** | All generated appraisal names start with `kja-` for reliable cleanup on regeneration |
+| Concept           | Description                                                                                      |
+|-------------------|--------------------------------------------------------------------------------------------------|
+| **Tier 1**        | Primary runtime dependencies whose version matrix you test against (e.g. `activerecord`, `mail`) |
+| **Tier 2**        | Secondary runtime dependencies cross-producted with tier 1 (e.g. `omniauth`)                     |
+| **Ruby series**   | Buckets like `r2.4`, `r2.6`, `r2`, `r3.1`, `r3` derived from min-ruby seam analysis              |
+| **Seam**          | A version boundary where a gem's `required_ruby_version` floor increases                         |
+| **Mode**          | Version selection strategy: `major`, `minor`, `patch`, `minor-minmax`, or `semver`               |
+| **`kja-` prefix** | All generated appraisal names start with `kja-` for reliable cleanup on regeneration             |
 
 ## 💡 Info you can shake a stick at
 
 | Tokens to Remember      | [![Gem name][⛳️name-img]][⛳️gem-name] [![Gem namespace][⛳️namespace-img]][⛳️gem-namespace]                                                                                                                                                                                                                                                                          |
 |-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Works with JRuby        | [![JRuby current Compat][💎jruby-c-i]][🚎10-j-wf] [![JRuby HEAD Compat][💎jruby-headi]][🚎3-hd-wf]|
-| Works with Truffle Ruby | [![Truffle Ruby 24.2 Compat][💎truby-24.2i]][🚎truby-24.2-wf] [![Truffle Ruby 25.0 Compat][💎truby-25.0i]][🚎truby-25.0-wf] [![Truffle Ruby current Compat][💎truby-c-i]][🚎9-t-wf]|
-| Works with MRI Ruby 4   | [![Ruby 4.0 Compat][💎ruby-4.0i]][🚎11-c-wf] [![Ruby current Compat][💎ruby-c-i]][🚎11-c-wf] [![Ruby HEAD Compat][💎ruby-headi]][🚎3-hd-wf]|
-| Works with MRI Ruby 3   | [![Ruby 3.2 Compat][💎ruby-3.2i]][🚎ruby-3.2-wf] [![Ruby 3.3 Compat][💎ruby-3.3i]][🚎ruby-3.3-wf] [![Ruby 3.4 Compat][💎ruby-3.4i]][🚎ruby-3.4-wf]|
+| Works with JRuby        | [![JRuby current Compat][💎jruby-c-i]][🚎10-j-wf] [![JRuby HEAD Compat][💎jruby-headi]][🚎3-hd-wf]                                                                                                                                                                                                                                                                  |
+| Works with Truffle Ruby | [![Truffle Ruby 24.2 Compat][💎truby-24.2i]][🚎truby-24.2-wf] [![Truffle Ruby 25.0 Compat][💎truby-25.0i]][🚎truby-25.0-wf] [![Truffle Ruby current Compat][💎truby-c-i]][🚎9-t-wf]                                                                                                                                                                                 |
+| Works with MRI Ruby 4   | [![Ruby 4.0 Compat][💎ruby-4.0i]][🚎11-c-wf] [![Ruby current Compat][💎ruby-c-i]][🚎11-c-wf] [![Ruby HEAD Compat][💎ruby-headi]][🚎3-hd-wf]                                                                                                                                                                                                                         |
+| Works with MRI Ruby 3   | [![Ruby 3.2 Compat][💎ruby-3.2i]][🚎ruby-3.2-wf] [![Ruby 3.3 Compat][💎ruby-3.3i]][🚎ruby-3.3-wf] [![Ruby 3.4 Compat][💎ruby-3.4i]][🚎ruby-3.4-wf]                                                                                                                                                                                                                  |
 | Support & Community     | [![Join Me on Daily.dev's RubyFriends][✉️ruby-friends-img]][✉️ruby-friends] [![Live Chat on Discord][✉️discord-invite-img-ftb]][✉️discord-invite] [![Get help from me on Upwork][👨🏼‍🏫expsup-upwork-img]][👨🏼‍🏫expsup-upwork] [![Get help from me on Codementor][👨🏼‍🏫expsup-codementor-img]][👨🏼‍🏫expsup-codementor]                                       |
 | Source                  | [![Source on GitLab.com][📜src-gl-img]][📜src-gl] [![Source on CodeBerg.org][📜src-cb-img]][📜src-cb] [![Source on Github.com][📜src-gh-img]][📜src-gh] [![The best SHA: dQw4w9WgXcQ!][🧮kloc-img]][🧮kloc]                                                                                                                                                         |
 | Documentation           | [![Current release on RubyDoc.info][📜docs-cr-rd-img]][🚎yard-current] [![YARD on Galtzo.com][📜docs-head-rd-img]][🚎yard-head] [![Maintainer Blog][🚂maint-blog-img]][🚂maint-blog] [![GitLab Wiki][📜gl-wiki-img]][📜gl-wiki] [![GitHub Wiki][📜gh-wiki-img]][📜gh-wiki]                                                                                          |
@@ -77,12 +83,12 @@ Compatible with MRI Ruby 3.2.0+, and concordant releases of JRuby, and TruffleRu
 <details markdown="1">
   <summary>Find this repo on federated forges (Coming soon!)</summary>
 
-| Federated [DVCS][💎d-in-dvcs] Repository        | Status                                                                | Issues                    | PRs                      | Wiki                      | CI                       | Discussions                  |
-|-------------------------------------------------|-----------------------------------------------------------------------|---------------------------|--------------------------|---------------------------|--------------------------|------------------------------|
+| Federated [DVCS][💎d-in-dvcs] Repository                   | Status                                                                | Issues                    | PRs                      | Wiki                      | CI                       | Discussions                  |
+|------------------------------------------------------------|-----------------------------------------------------------------------|---------------------------|--------------------------|---------------------------|--------------------------|------------------------------|
 | 🧪 [kettle-rb/kettle-jem-appraisals on GitLab][📜src-gl]   | The Truth                                                             | [💚][🤝gl-issues]         | [💚][🤝gl-pulls]         | [💚][📜gl-wiki]           | 🐭 Tiny Matrix           | ➖                            |
 | 🧊 [kettle-rb/kettle-jem-appraisals on CodeBerg][📜src-cb] | An Ethical Mirror ([Donate][🤝cb-donate])                             | [💚][🤝cb-issues]         | [💚][🤝cb-pulls]         | ➖                         | ⭕️ No Matrix             | ➖                            |
 | 🐙 [kettle-rb/kettle-jem-appraisals on GitHub][📜src-gh]   | Another Mirror                                                        | [💚][🤝gh-issues]         | [💚][🤝gh-pulls]         | [💚][📜gh-wiki]           | 💯 Full Matrix           | [💚][gh-discussions]         |
-| 🎮️ [Discord Server][✉️discord-invite]          | [![Live Chat on Discord][✉️discord-invite-img-ftb]][✉️discord-invite] | [Let's][✉️discord-invite] | [talk][✉️discord-invite] | [about][✉️discord-invite] | [this][✉️discord-invite] | [library!][✉️discord-invite] |
+| 🎮️ [Discord Server][✉️discord-invite]                     | [![Live Chat on Discord][✉️discord-invite-img-ftb]][✉️discord-invite] | [Let's][✉️discord-invite] | [talk][✉️discord-invite] | [about][✉️discord-invite] | [this][✉️discord-invite] | [library!][✉️discord-invite] |
 
 </details>
 
@@ -185,6 +191,16 @@ appraisal_matrix:
     # Each tier1 version is assigned to its optimal Ruby bucket.
     tier1:
       - name: activerecord
+        # Optional requirements filter
+        requirements:
+          - ">= 6.1"
+          - "< 8.0"
+        # Optional exact-version allowlist, added on top of mode + requirements
+        include_versions:
+          - "8.0.1"
+        # Optional exact-version denylist, removed from the final matrix
+        exclude_versions:
+          - "7.2"
       - name: mail
         mode: major  # per-gem mode override
 
@@ -202,12 +218,93 @@ appraisal_matrix:
 
 ### Version selection modes
 
-| Mode | Selects | Best for |
-|------|---------|----------|
-| `major` | Latest minor of each major version | Large gems with many majors (e.g. Rails) |
-| `minor` | Every minor version across all majors | Small gems with few versions |
-| `minor-minmax` | First + last minor per older major; all minors of current major | Balanced coverage |
-| `semver` | Latest minor per older major + Ruby-cutoff minors + all minors of current major | **Default** — best signal-to-noise ratio |
+| Mode           | Selects                                                                                                                           | Best for                                                   |
+|----------------|-----------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------|
+| `major`        | Latest minor of each major version                                                                                                | Large gems with many majors (e.g. Rails)                   |
+| `minor`        | Every minor version across all majors                                                                                             | Small gems with few versions                               |
+| `patch`        | Every matching patch version                                                                                                      | Tight compatibility windows or regression-focused matrices |
+| `minor-minmax` | First + last minor per older major; all minors of current major                                                                   | Balanced coverage                                          |
+| `semver`       | Latest minor per older major + Ruby-cutoff minors + all minors of current major unless that major is large, then latest + cutoffs | **Default** — best signal-to-noise ratio                   |
+
+### Per-gem requirements
+
+Each gem entry may further restrict the resolved version set with
+`requirements`. Values can be a string or an array of RubyGems
+requirement strings.
+
+```yaml
+appraisal_matrix:
+  gems:
+    tier1:
+      - name: activerecord
+        mode: patch
+        requirements:
+          - ">= 7.1"
+          - "< 7.2"
+      - name: sequel
+        requirements:
+          - ">= 5.0"
+          - "< 6.0"
+```
+
+Those filters apply both to version selection and to Ruby seam detection, so
+the generated buckets stay aligned with the versions you actually intend to
+test.
+
+### Per-gem include_versions
+
+Each gem entry may also specify `include_versions`, an explicit allowlist of
+additional versions to union into the matrix.
+
+```yaml
+appraisal_matrix:
+  gems:
+    tier1:
+      - name: activerecord
+        mode: semver
+        requirements:
+          - ">= 7.1"
+          - "< 7.2"
+        include_versions:
+          - "6.0.9"
+          - "8.0.1"
+```
+
+`include_versions` is **additive**:
+
+- versions listed there are added even if they fall outside `requirements`
+- versions listed there are added even if the selected `mode` would not normally include them
+- the final generated matrix is the union of `mode` results, `requirements` filtering, and `include_versions`
+
+### Per-gem exclude_versions
+
+Each gem entry may also specify `exclude_versions`, an explicit denylist of
+exact versions to remove from the resolved matrix.
+
+```yaml
+appraisal_matrix:
+  gems:
+    tier1:
+      - name: activerecord
+        mode: semver
+        requirements:
+          - ">= 7.1"
+          - "< 7.2"
+        include_versions:
+          - "6.0.9"
+          - "8.0.1"
+        exclude_versions:
+          - "7.1.0"
+          - "8.0.1"
+```
+
+`exclude_versions` is applied **after** mode selection, `requirements`, and
+`include_versions`, so the final set is:
+
+- start with the versions selected by `mode`
+- filter that set with `requirements`
+- union in `include_versions`
+- subtract `exclude_versions`
 
 #### Semver pruning
 
@@ -228,13 +325,13 @@ Format: `kja-{tier1}-{t1ver}-{tier2}-{t2ver}-{ruby}`
 
 Common gem abbreviations are applied automatically:
 
-| Gem | Abbreviation |
-|-----|-------------|
-| `activerecord` | `ar` |
-| `activesupport` | `as` |
-| `omniauth` | `oa` |
-| `mongoid` | `mo` |
-| `sequel` | `sq` |
+| Gem             | Abbreviation |
+|-----------------|--------------|
+| `activerecord`  | `ar`         |
+| `activesupport` | `as`         |
+| `omniauth`      | `oa`         |
+| `mongoid`       | `mo`         |
+| `sequel`        | `sq`         |
 
 Examples: `kja-ar-7-1-oa-2-1-r3`, `kja-mail-2-8-r3` (tier1-only)
 
@@ -246,13 +343,13 @@ where that version is the best (latest) choice. Gaps are backfilled automaticall
 
 Example with `activerecord`:
 
-| Version | Optimal bucket | Reason |
-|---------|---------------|--------|
-| AR 5.2 | `r2.4` | Next seam (AR 6.0) needs Ruby ≥2.5; newest Ruby below is 2.4 |
-| AR 6.1 | `r2.6` | Next seam (AR 7.0) needs Ruby ≥2.7; newest Ruby below is 2.6 |
-| AR 7.1 | `r2` | Next seam (AR 7.2) needs Ruby ≥3.1; newest Ruby below is 2.7 |
-| AR 7.2 | `r3.1` | Next seam (AR 8.0) needs Ruby ≥3.2; newest Ruby below is 3.1 |
-| AR 8.1 | `r3` | Catch-all latest bucket |
+| Version | Optimal bucket | Reason                                                       |
+|---------|----------------|--------------------------------------------------------------|
+| AR 5.2  | `r2.4`         | Next seam (AR 6.0) needs Ruby ≥2.5; newest Ruby below is 2.4 |
+| AR 6.1  | `r2.6`         | Next seam (AR 7.0) needs Ruby ≥2.7; newest Ruby below is 2.6 |
+| AR 7.1  | `r2`           | Next seam (AR 7.2) needs Ruby ≥3.1; newest Ruby below is 2.7 |
+| AR 7.2  | `r3.1`         | Next seam (AR 8.0) needs Ruby ≥3.2; newest Ruby below is 3.1 |
+| AR 8.1  | `r3`           | Catch-all latest bucket                                      |
 
 ## 🔧 Basic Usage
 
@@ -280,11 +377,11 @@ This generates:
 
 ### CLI flags
 
-| Flag | Description |
-|------|-------------|
+| Flag         | Description                                 |
+|--------------|---------------------------------------------|
 | `--scaffold` | Force scaffold mode (even if config exists) |
-| `--resolve` | Force resolve mode |
-| `--force` | Bypass freshness TTL and re-resolve |
+| `--resolve`  | Force resolve mode                          |
+| `--force`    | Bypass freshness TTL and re-resolve         |
 
 Without flags, the CLI auto-detects: scaffold if no versions are configured,
 resolve otherwise.
@@ -327,12 +424,12 @@ Produces entries like `kja-ar-7-1-oa-2-1-r3`, `kja-sq-5-0-oa-2-1-r3`.
 
 The resolve step also generates CI lifecycle groupings:
 
-| Lifecycle | Description |
-|-----------|-------------|
-| `supported` | Current Ruby series (actively maintained) |
-| `legacy` | Older Ruby series (maintenance mode) |
-| `unsupported` | Ruby versions past EOL |
-| `ancient` | Very old Ruby (best-effort) |
+| Lifecycle     | Description                               |
+|---------------|-------------------------------------------|
+| `supported`   | Current Ruby series (actively maintained) |
+| `legacy`      | Older Ruby series (maintenance mode)      |
+| `unsupported` | Ruby versions past EOL                    |
+| `ancient`     | Very old Ruby (best-effort)               |
 
 These map to separate GitHub Actions workflow files for tiered CI execution.
 
