@@ -88,6 +88,7 @@ Gem::Specification.new do |spec|
   # Runtime dependencies
   spec.add_dependency("kettle-dev", ">= 2.0")
   spec.add_dependency("kettle-jem", ">= 1.0")
+
   # Utilities
   spec.add_dependency("version_gem", "~> 1.1", ">= 1.1.9")
 
