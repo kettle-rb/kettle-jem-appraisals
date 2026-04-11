@@ -51,20 +51,20 @@ RSpec.describe Kettle::Jem::Appraisals::CLI do
         requirements = [">= 7.1", "< 7.2"]
         selected_versions = %w[7.1.0 7.1.1]
         all_versions = %w[6.0.9 7.1.0 7.1.1 8.0.1]
-        expect(builder).to receive(:select_versions)
+        allow(builder).to receive(:select_versions)
           .with("activerecord", mode: "patch", requirements: requirements)
           .and_return(selected_versions)
-        expect(resolver).to receive(:versions)
+        allow(resolver).to receive(:versions)
           .with("activerecord", requirements: requirements)
           .and_return(selected_versions.map { |version| {number: version} })
         allow(series_detector).to receive(:detect_with_ranges).and_return(
           buckets: ["r3"],
           bucket_ranges: {"r3" => {floor: Gem::Version.new("3.2"), ceiling: Gem::Version.new("3.99")}},
         )
-        expect(series_detector).to receive(:find_seams).with("activerecord", all_versions).and_return(
+        allow(series_detector).to receive(:find_seams).with("activerecord", all_versions).and_return(
           [{version: "6.0.9", min_ruby: Gem::Version.new("3.0")}],
         )
-        expect(builder).to receive(:assign_version_buckets).with(
+        allow(builder).to receive(:assign_version_buckets).with(
           "activerecord",
           all_versions,
           seams: [{version: "6.0.9", min_ruby: Gem::Version.new("3.0")}],
@@ -77,6 +77,20 @@ RSpec.describe Kettle::Jem::Appraisals::CLI do
         allow(workflow_gen).to receive(:generate).and_return({})
 
         cli.run
+
+        expect(builder).to have_received(:select_versions)
+          .with("activerecord", mode: "patch", requirements: requirements)
+        expect(resolver).to have_received(:versions)
+          .with("activerecord", requirements: requirements)
+        expect(series_detector).to have_received(:find_seams).with("activerecord", all_versions)
+        expect(builder).to have_received(:assign_version_buckets).with(
+          "activerecord",
+          all_versions,
+          seams: [{version: "6.0.9", min_ruby: Gem::Version.new("3.0")}],
+          buckets: ["r3"],
+          bucket_ranges: {"r3" => {floor: Gem::Version.new("3.2"), ceiling: Gem::Version.new("3.99")}},
+          all_versions: all_versions,
+        )
       end
     end
 
@@ -121,10 +135,10 @@ RSpec.describe Kettle::Jem::Appraisals::CLI do
         allow(Kettle::Jem::Appraisals::AppraisalsGenerator).to receive(:generate).and_return("# Appraisals\n")
 
         requirements = [">= 5.0", "< 6.0"]
-        expect(builder).to receive(:select_versions)
+        allow(builder).to receive(:select_versions)
           .with("sequel", mode: "major", requirements: requirements)
           .and_return(["5.9"])
-        expect(resolver).to receive(:minor_versions_by_major)
+        allow(resolver).to receive(:minor_versions_by_major)
           .with("sequel", requirements: requirements)
           .and_return([{major: 5, minors: ["5.0", "5.9"]}])
         allow(series_detector).to receive(:detect_with_ranges).and_return(
@@ -140,6 +154,11 @@ RSpec.describe Kettle::Jem::Appraisals::CLI do
         allow(workflow_gen).to receive(:generate).and_return({})
 
         cli.run
+
+        expect(builder).to have_received(:select_versions)
+          .with("sequel", mode: "major", requirements: requirements)
+        expect(resolver).to have_received(:minor_versions_by_major)
+          .with("sequel", requirements: requirements)
       end
     end
 
@@ -182,20 +201,20 @@ RSpec.describe Kettle::Jem::Appraisals::CLI do
         allow(Kettle::Jem::Appraisals::WorkflowStrategyGenerator).to receive(:new).and_return(workflow_gen)
         allow(Kettle::Jem::Appraisals::AppraisalsGenerator).to receive(:generate).and_return("# Appraisals\n")
 
-        expect(builder).to receive(:select_versions)
+        allow(builder).to receive(:select_versions)
           .with("mail", mode: "major", requirements: nil)
           .and_return(["2.8"])
-        expect(resolver).to receive(:minor_versions_by_major)
+        allow(resolver).to receive(:minor_versions_by_major)
           .with("mail", requirements: nil)
           .and_return([{major: 2, minors: ["2.7", "2.8"]}])
         allow(series_detector).to receive(:detect_with_ranges).and_return(
           buckets: ["r3"],
           bucket_ranges: {"r3" => {floor: Gem::Version.new("3.2"), ceiling: Gem::Version.new("3.99")}},
         )
-        expect(series_detector).to receive(:find_seams).with("mail", %w[2.7 2.7.1 2.8]).and_return(
+        allow(series_detector).to receive(:find_seams).with("mail", %w[2.7 2.7.1 2.8]).and_return(
           [{version: "2.7", min_ruby: Gem::Version.new("3.2")}],
         )
-        expect(builder).to receive(:assign_version_buckets).with(
+        allow(builder).to receive(:assign_version_buckets).with(
           "mail",
           %w[2.7.1 2.8],
           seams: [{version: "2.7", min_ruby: Gem::Version.new("3.2")}],
@@ -208,6 +227,20 @@ RSpec.describe Kettle::Jem::Appraisals::CLI do
         allow(workflow_gen).to receive(:generate).and_return({})
 
         cli.run
+
+        expect(builder).to have_received(:select_versions)
+          .with("mail", mode: "major", requirements: nil)
+        expect(resolver).to have_received(:minor_versions_by_major)
+          .with("mail", requirements: nil)
+        expect(series_detector).to have_received(:find_seams).with("mail", %w[2.7 2.7.1 2.8])
+        expect(builder).to have_received(:assign_version_buckets).with(
+          "mail",
+          %w[2.7.1 2.8],
+          seams: [{version: "2.7", min_ruby: Gem::Version.new("3.2")}],
+          buckets: ["r3"],
+          bucket_ranges: {"r3" => {floor: Gem::Version.new("3.2"), ceiling: Gem::Version.new("3.99")}},
+          all_versions: %w[2.7 2.7.1 2.8],
+        )
       end
     end
 
@@ -262,20 +295,20 @@ RSpec.describe Kettle::Jem::Appraisals::CLI do
         selected_versions = %w[7.1.0 7.1.1]
         final_versions = %w[6.0.9 7.1.1]
         all_versions = %w[6.0.9 7.1.1]
-        expect(builder).to receive(:select_versions)
+        allow(builder).to receive(:select_versions)
           .with("activerecord", mode: "patch", requirements: requirements)
           .and_return(selected_versions)
-        expect(resolver).to receive(:versions)
+        allow(resolver).to receive(:versions)
           .with("activerecord", requirements: requirements)
           .and_return(selected_versions.map { |version| {number: version} })
         allow(series_detector).to receive(:detect_with_ranges).and_return(
           buckets: ["r3"],
           bucket_ranges: {"r3" => {floor: Gem::Version.new("3.2"), ceiling: Gem::Version.new("3.99")}},
         )
-        expect(series_detector).to receive(:find_seams).with("activerecord", all_versions).and_return(
+        allow(series_detector).to receive(:find_seams).with("activerecord", all_versions).and_return(
           [{version: "6.0.9", min_ruby: Gem::Version.new("3.0")}],
         )
-        expect(builder).to receive(:assign_version_buckets).with(
+        allow(builder).to receive(:assign_version_buckets).with(
           "activerecord",
           final_versions,
           seams: [{version: "6.0.9", min_ruby: Gem::Version.new("3.0")}],
@@ -288,6 +321,20 @@ RSpec.describe Kettle::Jem::Appraisals::CLI do
         allow(workflow_gen).to receive(:generate).and_return({})
 
         cli.run
+
+        expect(builder).to have_received(:select_versions)
+          .with("activerecord", mode: "patch", requirements: requirements)
+        expect(resolver).to have_received(:versions)
+          .with("activerecord", requirements: requirements)
+        expect(series_detector).to have_received(:find_seams).with("activerecord", all_versions)
+        expect(builder).to have_received(:assign_version_buckets).with(
+          "activerecord",
+          final_versions,
+          seams: [{version: "6.0.9", min_ruby: Gem::Version.new("3.0")}],
+          buckets: ["r3"],
+          bucket_ranges: {"r3" => {floor: Gem::Version.new("3.2"), ceiling: Gem::Version.new("3.99")}},
+          all_versions: all_versions,
+        )
       end
     end
   end

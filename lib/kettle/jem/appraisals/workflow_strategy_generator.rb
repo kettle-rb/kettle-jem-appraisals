@@ -99,7 +99,7 @@ module Kettle
         # Determines which lifecycle a Ruby floor version belongs to.
         def lifecycle_for(ruby_floor)
           LIFECYCLE_RANGES.each do |name, range|
-            return name if ruby_floor >= range[:min] && ruby_floor <= range[:max]
+            return name if ruby_floor.between?(range[:min], range[:max])
           end
           # Fallback: if below all ranges, ancient; if above, current
           return "ancient" if ruby_floor < LIFECYCLE_RANGES["ancient"][:min]

@@ -62,13 +62,13 @@ RSpec.describe Kettle::Jem::Appraisals::RubySeriesDetector do
     end
 
     context "with simple tier1 + tier2" do
-      let(:tier1) { [{"name" => "mygem", "versions" => ["1.0", "2.0"]}] }
-      let(:tier2) { [{"name" => "other", "versions" => ["2.1"]}] }
+      let(:tier_one_gems) { [{"name" => "mygem", "versions" => ["1.0", "2.0"]}] }
+      let(:tier_two_gems) { [{"name" => "other", "versions" => ["2.1"]}] }
 
       it "returns r3 when all gems require >= 3.2" do
         allow(resolver).to receive(:min_ruby_version).and_return(Gem::Version.new("3.2"))
 
-        result = detector.detect(tier1, tier2)
+        result = detector.detect(tier_one_gems, tier_two_gems)
         expect(result).to eq(["r3"])
       end
 
@@ -77,7 +77,7 @@ RSpec.describe Kettle::Jem::Appraisals::RubySeriesDetector do
         allow(resolver).to receive(:min_ruby_version).with("mygem", anything).and_return(Gem::Version.new("2.7"), Gem::Version.new("3.1"))
         allow(resolver).to receive(:min_ruby_version).with("other", anything).and_return(Gem::Version.new("3.1"))
 
-        result = detector.detect(tier1, tier2)
+        result = detector.detect(tier_one_gems, tier_two_gems)
         # Should have buckets for 2.7 and 3.1
         expect(result.size).to be >= 2
         # Should include a Ruby 2 bucket and a Ruby 3 bucket
@@ -87,8 +87,8 @@ RSpec.describe Kettle::Jem::Appraisals::RubySeriesDetector do
     end
 
     context "with project floor" do
-      let(:tier1) { [{"name" => "mygem", "versions" => ["1.0", "2.0"]}] }
-      let(:tier2) { [] }
+      let(:tier_one_gems) { [{"name" => "mygem", "versions" => ["1.0", "2.0"]}] }
+      let(:tier_two_gems) { [] }
 
       it "excludes buckets below project min_ruby" do
         # mygem 1.0 → Ruby 2.4, mygem 2.0 → Ruby 3.1
@@ -97,7 +97,7 @@ RSpec.describe Kettle::Jem::Appraisals::RubySeriesDetector do
           .and_return(Gem::Version.new("2.4"), Gem::Version.new("3.1"))
 
         # Project requires >= 3.0, so Ruby 2.x buckets should be excluded
-        result = detector.detect(tier1, tier2, project_min_ruby: Gem::Version.new("3.0"))
+        result = detector.detect(tier_one_gems, tier_two_gems, project_min_ruby: Gem::Version.new("3.0"))
         expect(result.none? { |b| b.start_with?("r2") }).to be true
       end
     end
@@ -110,8 +110,8 @@ RSpec.describe Kettle::Jem::Appraisals::RubySeriesDetector do
     end
 
     context "with min_ruby below MINIMUM_RUBY_FLOOR" do
-      let(:tier1) { [{"name" => "oldgem", "versions" => ["1.0", "2.0"]}] }
-      let(:tier2) { [] }
+      let(:tier_one_gems) { [{"name" => "oldgem", "versions" => ["1.0", "2.0"]}] }
+      let(:tier_two_gems) { [] }
 
       before do
         allow(resolver).to receive(:versions).and_return(
@@ -125,7 +125,7 @@ RSpec.describe Kettle::Jem::Appraisals::RubySeriesDetector do
           .with("oldgem", anything)
           .and_return(Gem::Version.new("1.9"), Gem::Version.new("2.1"))
 
-        result = detector.detect(tier1, tier2)
+        result = detector.detect(tier_one_gems, tier_two_gems)
         # Both 1.9 and 2.1 are below 2.3, so they both clamp to 2.3,
         # producing a single bucket (no seam between them after clamping)
         expect(result.none? { |b| b.include?("1.") }).to be true

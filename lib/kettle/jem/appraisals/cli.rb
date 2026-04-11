@@ -46,12 +46,14 @@ module Kettle
           @project_dir = project_dir
         end
 
-        # Convenience entry point: instantiates a CLI and runs it.
-        #
-        # @param args [Array<String>] command-line arguments
-        # @return [void]
-        def self.run(args)
-          new(args).run
+        class << self
+          # Convenience entry point: instantiates a CLI and runs it.
+          #
+          # @param args [Array<String>] command-line arguments
+          # @return [void]
+          def run(args)
+            new(args).run
+          end
         end
 
         # Detects the appropriate mode and dispatches to scaffold or resolve.
@@ -209,12 +211,14 @@ module Kettle
 
           # Build full-version gem configs for seam detection
           all_versions_by_gem = {}
-          all_version_configs = (tier1_gems + tier2_gems).map { |gc|
-            mode = gc["mode"] || if tier1_gems.include?(gc)
-              gems_config.dig("tier1_mode") || global_mode
-            else
-              gems_config.dig("tier2_mode") || global_mode
-            end
+          all_version_configs = (tier1_gems + tier2_gems).map do |gc|
+            tier_mode =
+              if tier1_gems.include?(gc)
+                gems_config.dig("tier1_mode") || global_mode
+              else
+                gems_config.dig("tier2_mode") || global_mode
+              end
+            mode = gc["mode"] || tier_mode
             requirements = gem_requirements(gc)
             include_versions = gem_include_versions(gc)
             exclude_versions = gem_exclude_versions(gc)
@@ -228,7 +232,7 @@ module Kettle
             )
             all_versions_by_gem[gc["name"]] = all_versions
             {"name" => gc["name"], "versions" => all_versions}
-          }
+          end
           detection = series_detector.detect_with_ranges(all_version_configs, [], project_min_ruby: project_min_ruby)
           ruby_series = detection[:buckets]
           bucket_ranges = detection[:bucket_ranges]

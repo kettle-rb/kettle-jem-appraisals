@@ -271,7 +271,7 @@ module Kettle
             ceiling = range[:ceiling]
 
             # The bucket's ceiling must be BELOW the next version's min_ruby
-            next unless ceiling < ruby_floor
+            next if ceiling >= ruby_floor
 
             if best_ceiling.nil? || ceiling > best_ceiling
               best_bucket = b
@@ -304,7 +304,7 @@ module Kettle
               ver_ruby = version_min_ruby[ver]
               next false unless ver_ruby
 
-              ver_ruby >= range[:floor] && ver_ruby <= range[:ceiling]
+              ver_ruby.between?(range[:floor], range[:ceiling])
             }
 
             # If no version has min_ruby IN the range, find the newest version

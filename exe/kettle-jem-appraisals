@@ -15,8 +15,8 @@ require "rubygems"
 begin
   gem("kettle-jem-appraisals")
   require "kettle/jem/appraisals"
-rescue Gem::MissingSpecError, LoadError => e
-  warn("[kettle-jem-appraisals] Failed to load: #{e.message}")
+rescue LoadError
+  warn("[kettle-jem-appraisals] Failed to load: #{$ERROR_INFO.message}")
   exit(1)
 end
 

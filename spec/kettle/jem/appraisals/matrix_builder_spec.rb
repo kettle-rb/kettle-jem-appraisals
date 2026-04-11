@@ -57,10 +57,10 @@ RSpec.describe Kettle::Jem::Appraisals::MatrixBuilder do
     context "with mode: semver" do
       before do
         # Mock the version resolver for semver mode
-        allow(resolver).to receive(:versions).and_return(
-          by_major.flat_map { |m| m[:minors].map { |v| {number: "#{v}.0"} } },
+        allow(resolver).to receive_messages(
+          versions: by_major.flat_map { |major| major[:minors].map { |version| {number: "#{version}.0"} } },
+          min_ruby_version: nil,
         )
-        allow(resolver).to receive(:min_ruby_version).and_return(nil)
       end
 
       it "returns last minor of older majors + all of current" do
@@ -79,9 +79,9 @@ RSpec.describe Kettle::Jem::Appraisals::MatrixBuilder do
       end
 
       before do
-        allow(resolver).to receive(:minor_versions_by_major).and_return(large_by_major)
-        allow(resolver).to receive(:versions).and_return(
-          large_minors.map { |v| {number: "#{v}.0"} },
+        allow(resolver).to receive_messages(
+          minor_versions_by_major: large_by_major,
+          versions: large_minors.map { |version| {number: "#{version}.0"} },
         )
         # Simulate a Ruby cutoff at 1.8 (min_ruby jumps from 2.5 to 2.7)
         allow(resolver).to receive(:min_ruby_version) do |_gem, version|
@@ -130,7 +130,7 @@ RSpec.describe Kettle::Jem::Appraisals::MatrixBuilder do
       }
     end
 
-    context "in major mode (one per major)" do
+    context "when in major mode (one per major)" do
       it "assigns each version to its optimal bucket and fills gaps" do
         selected = ["5.2", "6.1", "7.2"]
         result = builder.assign_version_buckets(
@@ -162,7 +162,7 @@ RSpec.describe Kettle::Jem::Appraisals::MatrixBuilder do
       end
     end
 
-    context "in minor mode (all versions)" do
+    context "when in minor mode (all versions)" do
       it "assigns each version to its unique optimal bucket" do
         selected = ["5.0", "5.1", "5.2", "6.0", "6.1", "7.0", "7.1", "7.2"]
         result = builder.assign_version_buckets(

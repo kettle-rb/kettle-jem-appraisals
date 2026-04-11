@@ -67,7 +67,7 @@ require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new(:spec)
 
-task default: :spec
+Rake::Task[:default].enhance([:spec])
 
 # External gems that define tasks - add here!
 require "kettle/dev"
