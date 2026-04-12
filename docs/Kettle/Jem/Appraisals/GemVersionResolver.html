@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Kettle::Jem::Appraisals::GemVersionResolver
+  
+    &mdash; Documentation by YARD 0.9.39
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Kettle::Jem::Appraisals::GemVersionResolver";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (G)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../Kettle.html" title="Kettle (module)">Kettle</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Jem.html" title="Kettle::Jem (module)">Jem</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Appraisals.html" title="Kettle::Jem::Appraisals (module)">Appraisals</a></span></span>
+     &raquo; 
+    <span class="title">GemVersionResolver</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Kettle::Jem::Appraisals::GemVersionResolver
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Kettle::Jem::Appraisals::GemVersionResolver</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/kettle/jem/appraisals/gem_version_resolver.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>Queries the RubyGems.org API to resolve gem version information.</p>
+
+<p>Caches results per session to avoid redundant API calls.<br />
+Uses the v1 API for version listings and the v2 API for<br />
+per-version dependency data.</p>
+
+<p>Floor-detection logic (+min_ruby_version+, +parse_min_ruby+, and the<br />
+underlying HTTP calls) is delegated to<br />
+GemRubyFloor::Resolver so the same implementation is<br />
+shared with the +kettle-jem+ gemspec harmonization pipeline.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Fetch all stable versions of a gem</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_resolver'>resolver</span> <span class='op'>=</span> <span class='const'>GemVersionResolver</span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="#initialize-instance_method" title="Kettle::Jem::Appraisals::GemVersionResolver#initialize (method)">new</a></span></span>
+<span class='id identifier rubyid_resolver'>resolver</span><span class='period'>.</span><span class='id identifier rubyid_versions'>versions</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>activerecord</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='comment'>#=&gt; [{number: &quot;7.1.3&quot;, ruby_version: &quot;&gt;= 2.7.0&quot;, ...}, ...]</span></code></pre>
+    
+  </div>
+
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="RUBYGEMS_API_BASE-constant" class="">RUBYGEMS_API_BASE =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Returns base URL for the RubyGems v1 REST API (kept for<br />
+compatibility; actual requests go through the floor resolver).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>base URL for the RubyGems v1 REST API (kept for<br />
+compatibility; actual requests go through the floor resolver)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>https://rubygems.org/api/v1</span><span class='tstring_end'>&quot;</span></span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#floor_resolver-instance_method" title="#floor_resolver (instance method)">#<strong>floor_resolver</strong>  &#x21d2; Kettle::Jem::GemRubyFloor::Resolver </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The shared floor resolver that owns the HTTP cache and all API calls.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#cache-instance_method" title="#cache (instance method)">#<strong>cache</strong>  &#x21d2; Hash </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>In-memory cache of API responses (shared with the floor resolver — this is the same object, not a copy).</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(floor_resolver: nil)  &#x21d2; GemVersionResolver </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A new instance of GemVersionResolver.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#min_ruby_version-instance_method" title="#min_ruby_version (instance method)">#<strong>min_ruby_version</strong>(gem_name, version)  &#x21d2; Gem::Version<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the minimum Ruby version required by a specific gem version.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#minor_versions_by_major-instance_method" title="#minor_versions_by_major (instance method)">#<strong>minor_versions_by_major</strong>(gem_name, requirements: nil)  &#x21d2; Array&lt;Hash&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns all minor versions (+X.Y+) for a gem, grouped by major version.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#version_info-instance_method" title="#version_info (instance method)">#<strong>version_info</strong>(gem_name, version)  &#x21d2; Hash<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns version info (dependencies, ruby_version) for a specific gem version.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#versions-instance_method" title="#versions (instance method)">#<strong>versions</strong>(gem_name, include_prerelease: false, requirements: nil)  &#x21d2; Array&lt;Hash&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns all versions of a gem, sorted oldest-to-newest.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(floor_resolver: nil)  &#x21d2; <tt><span class='object_link'><a href="" title="Kettle::Jem::Appraisals::GemVersionResolver (class)">GemVersionResolver</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a new instance of GemVersionResolver.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>floor_resolver</span>
+      
+      
+        <span class='type'>(<tt>Kettle::Jem::GemRubyFloor::Resolver</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>optional pre-built resolver (useful for sharing a warm cache across<br />
+multiple components in the same session); a new instance is created<br />
+when not provided</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+40
+41
+42</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/gem_version_resolver.rb', line 40</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>floor_resolver:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='ivar'>@floor_resolver</span> <span class='op'>=</span> <span class='id identifier rubyid_floor_resolver'>floor_resolver</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="../../../Kettle.html" title="Kettle (module)">Kettle</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Jem.html" title="Kettle::Jem (module)">Jem</a></span></span><span class='op'>::</span><span class='const'>GemRubyFloor</span><span class='op'>::</span><span class='const'>Resolver</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="floor_resolver-instance_method">
+  
+    #<strong>floor_resolver</strong>  &#x21d2; <tt>Kettle::Jem::GemRubyFloor::Resolver</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the shared floor resolver<br />
+that owns the HTTP cache and all API calls.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Kettle::Jem::GemRubyFloor::Resolver</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the shared floor resolver<br />
+that owns the HTTP cache and all API calls</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+28
+29
+30</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/gem_version_resolver.rb', line 28</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_floor_resolver'>floor_resolver</span>
+  <span class='ivar'>@floor_resolver</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="cache-instance_method">
+  
+    #<strong>cache</strong>  &#x21d2; <tt>Hash</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns in-memory cache of API responses (shared with the floor<br />
+resolver — this is the same object, not a copy).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>in-memory cache of API responses (shared with the floor<br />
+resolver — this is the same object, not a copy)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+32
+33
+34</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/gem_version_resolver.rb', line 32</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_cache'>cache</span>
+  <span class='id identifier rubyid_floor_resolver'>floor_resolver</span><span class='period'>.</span><span class='id identifier rubyid_cache'>cache</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="min_ruby_version-instance_method">
+  
+    #<strong>min_ruby_version</strong>(gem_name, version)  &#x21d2; <tt>Gem::Version</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the minimum Ruby version required by a specific gem version.</p>
+
+<p>Delegates to GemRubyFloor::Resolver#min_ruby_version.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>gem_name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the RubyGems gem name</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>version</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>an exact version string (e.g., +”7.1.3”+)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Gem::Version</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the minimum required Ruby version, or +nil+ if unspecified</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+101
+102
+103</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/gem_version_resolver.rb', line 101</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_min_ruby_version'>min_ruby_version</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='id identifier rubyid_version'>version</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_floor_resolver'>floor_resolver</span><span class='period'>.</span><span class='id identifier rubyid_min_ruby_version'>min_ruby_version</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='id identifier rubyid_version'>version</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="minor_versions_by_major-instance_method">
+  
+    #<strong>minor_versions_by_major</strong>(gem_name, requirements: nil)  &#x21d2; <tt>Array&lt;Hash&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns all minor versions (+X.Y+) for a gem, grouped by major version.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_resolver'>resolver</span><span class='period'>.</span><span class='id identifier rubyid_minor_versions_by_major'>minor_versions_by_major</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>activerecord</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='comment'>#=&gt; [{major: 6, minors: [&quot;6.0&quot;, &quot;6.1&quot;]}, {major: 7, minors: [&quot;7.0&quot;, &quot;7.1&quot;, &quot;7.2&quot;]}]</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>gem_name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the RubyGems gem name</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>sorted entries, each with +:major+ (Integer) and +:minors+ (Array<String>)</String></p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/gem_version_resolver.rb', line 112</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_minor_versions_by_major'>minor_versions_by_major</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='label'>requirements:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_vers'>vers</span> <span class='op'>=</span> <span class='id identifier rubyid_versions'>versions</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='label'>requirements:</span> <span class='id identifier rubyid_requirements'>requirements</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_grouped'>grouped</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_vers'>vers</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span>
+    <span class='id identifier rubyid_gv'>gv</span> <span class='op'>=</span> <span class='const'>Gem</span><span class='op'>::</span><span class='const'>Version</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='lbracket'>[</span><span class='symbol'>:number</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_segments'>segments</span> <span class='op'>=</span> <span class='id identifier rubyid_gv'>gv</span><span class='period'>.</span><span class='id identifier rubyid_segments'>segments</span>
+    <span class='id identifier rubyid_major'>major</span> <span class='op'>=</span> <span class='id identifier rubyid_segments'>segments</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_minor_str'>minor_str</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_segments'>segments</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_segments'>segments</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_grouped'>grouped</span><span class='lbracket'>[</span><span class='id identifier rubyid_major'>major</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='const'>Set</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+    <span class='id identifier rubyid_grouped'>grouped</span><span class='lbracket'>[</span><span class='id identifier rubyid_major'>major</span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_minor_str'>minor_str</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_grouped'>grouped</span><span class='period'>.</span><span class='id identifier rubyid_sort_by'>sort_by</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:first</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_major'>major</span><span class='comma'>,</span> <span class='id identifier rubyid_minors'>minors</span><span class='op'>|</span>
+    <span class='lbrace'>{</span><span class='label'>major:</span> <span class='id identifier rubyid_major'>major</span><span class='comma'>,</span> <span class='label'>minors:</span> <span class='id identifier rubyid_minors'>minors</span><span class='period'>.</span><span class='id identifier rubyid_sort_by'>sort_by</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='const'>Gem</span><span class='op'>::</span><span class='const'>Version</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_m'>m</span><span class='rparen'>)</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='rbrace'>}</span>
+  <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="version_info-instance_method">
+  
+    #<strong>version_info</strong>(gem_name, version)  &#x21d2; <tt>Hash</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns version info (dependencies, ruby_version) for a specific gem version.</p>
+
+<p>Uses the v2 API which includes the full dependency structure.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>gem_name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the RubyGems gem name</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>version</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>an exact version string (e.g., +”7.1.3”+)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>a Hash with +:number+, +:ruby_version+, and +:runtime_dependencies+,<br />
+or +nil+ if the version was not found</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/gem_version_resolver.rb', line 78</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_version_info'>version_info</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='id identifier rubyid_version'>version</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_fetch_gem_info'>fetch_gem_info</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='id identifier rubyid_version'>version</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_data'>data</span>
+
+  <span class='id identifier rubyid_deps'>deps</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>dependencies</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_runtime_deps'>runtime_deps</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_deps'>deps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>runtime</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span>
+    <span class='lbrace'>{</span><span class='label'>name:</span> <span class='id identifier rubyid_d'>d</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>name</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>requirements:</span> <span class='id identifier rubyid_d'>d</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>requirements</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rbrace'>}</span>
+  <span class='rbrace'>}</span>
+
+  <span class='lbrace'>{</span>
+    <span class='label'>number:</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>number</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>ruby_version:</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ruby_version</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>runtime_dependencies:</span> <span class='id identifier rubyid_runtime_deps'>runtime_deps</span><span class='comma'>,</span>
+  <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="versions-instance_method">
+  
+    #<strong>versions</strong>(gem_name, include_prerelease: false, requirements: nil)  &#x21d2; <tt>Array&lt;Hash&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns all versions of a gem, sorted oldest-to-newest.</p>
+
+<p>Each entry is a Hash with the keys +:number+, +:ruby_version+,<br />
++:created_at+, and +:prerelease+.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>gem_name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the RubyGems gem name</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>include_prerelease</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>when +true+, includes pre-release versions (default: +false+)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>version hashes sorted by +Gem::Version+</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/gem_version_resolver.rb', line 52</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_versions'>versions</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='label'>include_prerelease:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>requirements:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raw'>raw</span> <span class='op'>=</span> <span class='id identifier rubyid_fetch_versions'>fetch_versions</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_versions'>versions</span> <span class='op'>=</span> <span class='id identifier rubyid_raw'>raw</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span>
+    <span class='lbrace'>{</span>
+      <span class='label'>number:</span> <span class='id identifier rubyid_v'>v</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>number</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+      <span class='label'>ruby_version:</span> <span class='id identifier rubyid_v'>v</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ruby_version</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+      <span class='label'>created_at:</span> <span class='id identifier rubyid_v'>v</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>created_at</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+      <span class='label'>prerelease:</span> <span class='id identifier rubyid_v'>v</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>prerelease</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='rbrace'>}</span>
+  <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_versions'>versions</span> <span class='op'>=</span> <span class='id identifier rubyid_versions'>versions</span><span class='period'>.</span><span class='id identifier rubyid_reject'>reject</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span><span class='lbracket'>[</span><span class='symbol'>:prerelease</span><span class='rbracket'>]</span> <span class='rbrace'>}</span> <span class='kw'>unless</span> <span class='id identifier rubyid_include_prerelease'>include_prerelease</span>
+  <span class='id identifier rubyid_requirement'>requirement</span> <span class='op'>=</span> <span class='id identifier rubyid_normalize_requirements'>normalize_requirements</span><span class='lparen'>(</span><span class='id identifier rubyid_requirements'>requirements</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_requirement'>requirement</span>
+    <span class='id identifier rubyid_versions'>versions</span> <span class='op'>=</span> <span class='id identifier rubyid_versions'>versions</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_requirement'>requirement</span><span class='period'>.</span><span class='id identifier rubyid_satisfied_by?'>satisfied_by?</span><span class='lparen'>(</span><span class='const'>Gem</span><span class='op'>::</span><span class='const'>Version</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='lbracket'>[</span><span class='symbol'>:number</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_versions'>versions</span><span class='period'>.</span><span class='id identifier rubyid_sort_by'>sort_by</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='const'>Gem</span><span class='op'>::</span><span class='const'>Version</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='lbracket'>[</span><span class='symbol'>:number</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Apr 12 11:49:29 2026 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.39 (ruby-4.0.2).
+</div>
+
+    </div>
+  </body>
+</html>

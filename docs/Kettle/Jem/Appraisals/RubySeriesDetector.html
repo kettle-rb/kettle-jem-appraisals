@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Kettle::Jem::Appraisals::RubySeriesDetector
+  
+    &mdash; Documentation by YARD 0.9.39
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Kettle::Jem::Appraisals::RubySeriesDetector";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (R)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../Kettle.html" title="Kettle (module)">Kettle</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Jem.html" title="Kettle::Jem (module)">Jem</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Appraisals.html" title="Kettle::Jem::Appraisals (module)">Appraisals</a></span></span>
+     &raquo; 
+    <span class="title">RubySeriesDetector</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Kettle::Jem::Appraisals::RubySeriesDetector
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Kettle::Jem::Appraisals::RubySeriesDetector</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/kettle/jem/appraisals/ruby_series_detector.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>Derives Ruby series buckets from the +min_ruby+ seams across gem versions.</p>
+
+<p>Instead of guessing which Ruby series are needed from the project gemspec,<br />
+this analyzes the actual +required_ruby_version+ of each selected gem<br />
+version to find “seams” — points where a gem drops Ruby support.</p>
+
+<p>== Ruby series bucket semantics (counterintuitive!)</p>
+
+<p>r3     = catch-all for newest in that major (3.2+), NOT “3.0”<br />
+  r3.1   = covers 3.0–3.1 (older minors before the catch-all)<br />
+  r2     = catch-all for 2.7+ (last 2.x)<br />
+  r2.6   = covers 2.6 only<br />
+  r2.4   = covers 2.4–2.5<br />
+  vHEAD  = always included (git HEAD)</p>
+
+<p>The major-only bucket (+rN+) is always the NEWEST catch-all for that major.<br />
+Named +rN.M+ buckets cover from that minor up to (but not including)<br />
+the next named bucket.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#resolver-instance_method" title="#resolver (instance method)">#<strong>resolver</strong>  &#x21d2; GemVersionResolver </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The resolver used to query RubyGems.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#detect-instance_method" title="#detect (instance method)">#<strong>detect</strong>(tier1_gems, tier2_gems, project_min_ruby: nil)  &#x21d2; Array&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Detects Ruby series buckets needed for the given gem configs.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#detect_with_ranges-instance_method" title="#detect_with_ranges (instance method)">#<strong>detect_with_ranges</strong>(tier1_gems, tier2_gems, project_min_ruby: nil)  &#x21d2; Hash{Symbol =&gt; Object} </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Detects Ruby series buckets and also returns per-bucket floor/ceiling ranges.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_seams-instance_method" title="#find_seams (instance method)">#<strong>find_seams</strong>(gem_name, versions)  &#x21d2; Array&lt;Hash&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the seam points for a single gem where +min_ruby+ increases.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(resolver:)  &#x21d2; RubySeriesDetector </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A new instance of RubySeriesDetector.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(resolver:)  &#x21d2; <tt><span class='object_link'><a href="" title="Kettle::Jem::Appraisals::RubySeriesDetector (class)">RubySeriesDetector</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a new instance of RubySeriesDetector.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>resolver</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="GemVersionResolver.html" title="Kettle::Jem::Appraisals::GemVersionResolver (class)">GemVersionResolver</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>a resolver instance for querying gem version data</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+37
+38
+39</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/ruby_series_detector.rb', line 37</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>resolver:</span><span class='rparen'>)</span>
+  <span class='ivar'>@resolver</span> <span class='op'>=</span> <span class='id identifier rubyid_resolver'>resolver</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="resolver-instance_method">
+  
+    #<strong>resolver</strong>  &#x21d2; <tt><span class='object_link'><a href="GemVersionResolver.html" title="Kettle::Jem::Appraisals::GemVersionResolver (class)">GemVersionResolver</a></span></tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the resolver used to query RubyGems.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="GemVersionResolver.html" title="Kettle::Jem::Appraisals::GemVersionResolver (class)">GemVersionResolver</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the resolver used to query RubyGems</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+34
+35
+36</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/ruby_series_detector.rb', line 34</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_resolver'>resolver</span>
+  <span class='ivar'>@resolver</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="detect-instance_method">
+  
+    #<strong>detect</strong>(tier1_gems, tier2_gems, project_min_ruby: nil)  &#x21d2; <tt>Array&lt;String&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Detects Ruby series buckets needed for the given gem configs.</p>
+
+<p>Convenience wrapper around <span class='object_link'><a href="#detect_with_ranges-instance_method" title="Kettle::Jem::Appraisals::RubySeriesDetector#detect_with_ranges (method)">#detect_with_ranges</a></span> that returns only<br />
+the bucket name list.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>tier1_gems</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>tier1 gem configs with +”name”+ and +”versions”+ keys</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>tier2_gems</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>tier2 gem configs with +”name”+ and +”versions”+ keys</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>project_min_ruby</span>
+      
+      
+        <span class='type'>(<tt>Gem::Version</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the project’s own minimum Ruby (floor)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>sorted Ruby series bucket names (e.g., +[“r2.4”, “r2”, “r3.1”, “r3”]+)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+50
+51
+52
+53</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/ruby_series_detector.rb', line 50</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_detect'>detect</span><span class='lparen'>(</span><span class='id identifier rubyid_tier1_gems'>tier1_gems</span><span class='comma'>,</span> <span class='id identifier rubyid_tier2_gems'>tier2_gems</span><span class='comma'>,</span> <span class='label'>project_min_ruby:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='id identifier rubyid_detect_with_ranges'>detect_with_ranges</span><span class='lparen'>(</span><span class='id identifier rubyid_tier1_gems'>tier1_gems</span><span class='comma'>,</span> <span class='id identifier rubyid_tier2_gems'>tier2_gems</span><span class='comma'>,</span> <span class='label'>project_min_ruby:</span> <span class='id identifier rubyid_project_min_ruby'>project_min_ruby</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:buckets</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="detect_with_ranges-instance_method">
+  
+    #<strong>detect_with_ranges</strong>(tier1_gems, tier2_gems, project_min_ruby: nil)  &#x21d2; <tt>Hash{Symbol =&gt; Object}</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Detects Ruby series buckets and also returns per-bucket floor/ceiling ranges.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_detector'>detector</span><span class='period'>.</span><span class='id identifier rubyid_detect_with_ranges'>detect_with_ranges</span><span class='lparen'>(</span><span class='id identifier rubyid_tier1'>tier1</span><span class='comma'>,</span> <span class='id identifier rubyid_tier2'>tier2</span><span class='rparen'>)</span>
+<span class='comment'>#=&gt; { buckets: [&quot;r2&quot;, &quot;r3.1&quot;, &quot;r3&quot;],
+</span><span class='comment'>#     bucket_ranges: { &quot;r2&quot; =&gt; {floor: v(&quot;2.7&quot;), ceiling: v(&quot;2.99&quot;)}, ... } }</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>tier1_gems</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>tier1 gem configs with +”name”+ and +”versions”+ keys</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>tier2_gems</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>tier2 gem configs with +”name”+ and +”versions”+ keys</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>project_min_ruby</span>
+      
+      
+        <span class='type'>(<tt>Gem::Version</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the project’s own minimum Ruby (floor)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Hash{Symbol =&gt; Object}</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>+:buckets+ (Array<String>) and +:bucket_ranges+
+(Hash=&gt; Hash{Symbol =&gt; Gem::Version}) with +:floor+ and +:ceiling+ per bucket</String></p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/ruby_series_detector.rb', line 66</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_detect_with_ranges'>detect_with_ranges</span><span class='lparen'>(</span><span class='id identifier rubyid_tier1_gems'>tier1_gems</span><span class='comma'>,</span> <span class='id identifier rubyid_tier2_gems'>tier2_gems</span><span class='comma'>,</span> <span class='label'>project_min_ruby:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_all_min_rubies'>all_min_rubies</span> <span class='op'>=</span> <span class='id identifier rubyid_collect_min_rubies'>collect_min_rubies</span><span class='lparen'>(</span><span class='id identifier rubyid_tier1_gems'>tier1_gems</span> <span class='op'>+</span> <span class='id identifier rubyid_tier2_gems'>tier2_gems</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_all_min_rubies'>all_min_rubies</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+    <span class='kw'>return</span> <span class='lbrace'>{</span><span class='label'>buckets:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>r3</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>bucket_ranges:</span> <span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>r3</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span><span class='label'>floor:</span> <span class='const'>Gem</span><span class='op'>::</span><span class='const'>Version</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>3.2</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='comma'>,</span> <span class='label'>ceiling:</span> <span class='const'>Gem</span><span class='op'>::</span><span class='const'>Version</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>99.99</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_project_min_ruby'>project_min_ruby</span>
+    <span class='id identifier rubyid_floor'>floor</span> <span class='op'>=</span> <span class='const'>Gem</span><span class='op'>::</span><span class='const'>Version</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_project_min_ruby'>project_min_ruby</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_all_min_rubies'>all_min_rubies</span><span class='period'>.</span><span class='id identifier rubyid_reject!'>reject!</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span> <span class='op'>&lt;</span> <span class='id identifier rubyid_floor'>floor</span> <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_all_min_rubies'>all_min_rubies</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_floor'>floor</span> <span class='kw'>unless</span> <span class='id identifier rubyid_all_min_rubies'>all_min_rubies</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_floor'>floor</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_minor_versions'>minor_versions</span> <span class='op'>=</span> <span class='id identifier rubyid_all_min_rubies'>all_min_rubies</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_minor_key'>minor_key</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_uniq'>uniq</span><span class='period'>.</span><span class='id identifier rubyid_sort'>sort</span>
+  <span class='id identifier rubyid_buckets_and_ranges'>buckets_and_ranges</span> <span class='op'>=</span> <span class='id identifier rubyid_minor_versions_to_buckets_with_ranges'>minor_versions_to_buckets_with_ranges</span><span class='lparen'>(</span><span class='id identifier rubyid_minor_versions'>minor_versions</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_buckets'>buckets</span> <span class='op'>=</span> <span class='id identifier rubyid_buckets_and_ranges'>buckets_and_ranges</span><span class='lbracket'>[</span><span class='symbol'>:buckets</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_sort_by'>sort_by</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_b'>b</span><span class='op'>|</span> <span class='id identifier rubyid_bucket_sort_key'>bucket_sort_key</span><span class='lparen'>(</span><span class='id identifier rubyid_b'>b</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='lbrace'>{</span><span class='label'>buckets:</span> <span class='id identifier rubyid_buckets'>buckets</span><span class='comma'>,</span> <span class='label'>bucket_ranges:</span> <span class='id identifier rubyid_buckets_and_ranges'>buckets_and_ranges</span><span class='lbracket'>[</span><span class='symbol'>:ranges</span><span class='rbracket'>]</span><span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="find_seams-instance_method">
+  
+    #<strong>find_seams</strong>(gem_name, versions)  &#x21d2; <tt>Array&lt;Hash&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the seam points for a single gem where +min_ruby+ increases.</p>
+
+<p>A “seam” is a version boundary where the gem’s +required_ruby_version+<br />
+increases compared to the previous version. These are the natural<br />
+Ruby-compatibility cutoff points.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_detector'>detector</span><span class='period'>.</span><span class='id identifier rubyid_find_seams'>find_seams</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>activerecord</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>6.0</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>6.1</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>7.0</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>7.1</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+<span class='comment'>#=&gt; [{version: &quot;6.0&quot;, min_ruby: v(&quot;2.5&quot;)}, {version: &quot;7.0&quot;, min_ruby: v(&quot;2.7&quot;)}]</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>gem_name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the RubyGems gem name</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>versions</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>sorted minor version strings (e.g., +[“6.0”, “6.1”, “7.0”]+)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>seam entries, each +String, min_ruby: Gem::Version+</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/ruby_series_detector.rb', line 96</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_seams'>find_seams</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='id identifier rubyid_versions'>versions</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='lbracket'>[</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_versions'>versions</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+
+  <span class='id identifier rubyid_seams'>seams</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_prev_ruby'>prev_ruby</span> <span class='op'>=</span> <span class='kw'>nil</span>
+
+  <span class='id identifier rubyid_versions'>versions</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_ver'>ver</span><span class='op'>|</span>
+    <span class='id identifier rubyid_patch'>patch</span> <span class='op'>=</span> <span class='id identifier rubyid_latest_patch'>latest_patch</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='id identifier rubyid_ver'>ver</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_min_ruby'>min_ruby</span> <span class='op'>=</span> <span class='id identifier rubyid_resolver'>resolver</span><span class='period'>.</span><span class='id identifier rubyid_min_ruby_version'>min_ruby_version</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='id identifier rubyid_patch'>patch</span><span class='rparen'>)</span>
+    <span class='kw'>next</span> <span class='kw'>unless</span> <span class='id identifier rubyid_min_ruby'>min_ruby</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_prev_ruby'>prev_ruby</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_min_ruby'>min_ruby</span> <span class='op'>&gt;</span> <span class='id identifier rubyid_prev_ruby'>prev_ruby</span>
+      <span class='id identifier rubyid_seams'>seams</span> <span class='op'>&lt;&lt;</span> <span class='lbrace'>{</span><span class='label'>version:</span> <span class='id identifier rubyid_ver'>ver</span><span class='comma'>,</span> <span class='label'>min_ruby:</span> <span class='id identifier rubyid_min_ruby'>min_ruby</span><span class='rbrace'>}</span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_prev_ruby'>prev_ruby</span> <span class='op'>=</span> <span class='id identifier rubyid_min_ruby'>min_ruby</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_seams'>seams</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Apr 12 11:49:29 2026 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.39 (ruby-4.0.2).
+</div>
+
+    </div>
+  </body>
+</html>

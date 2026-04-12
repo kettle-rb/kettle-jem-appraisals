@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.9.39
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "README";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="file_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'><p><a href="https://discord.gg/3qme4XHNKN"><img src="https://logos.galtzo.com/assets/images/galtzo-floss/avatar-192px.svg" alt="Galtzo FLOSS Logo by Aboling0, CC BY-SA 4.0"></a> <a href="https://www.ruby-lang.org/"><img src="https://logos.galtzo.com/assets/images/ruby-lang/avatar-192px.svg" alt="ruby-lang Logo, Yukihiro Matsumoto, Ruby Visual Identity Team, CC BY-SA 2.5"></a> <a href="https://github.com/kettle-rb"><img src="https://logos.galtzo.com/assets/images/kettle-rb/avatar-192px.svg" alt="kettle-rb Logo by Aboling0, CC BY-SA 4.0"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals"><img src="https://logos.galtzo.com/assets/images/kettle-rb/kettle-jem-appraisals/avatar-192px.svg" alt="kettle-jem-appraisals Logo by Aboling0, CC BY-SA 4.0"></a></p>
+
+<h1 id="-kettlejemappraisals">🍲 Kettle::Jem::Appraisals</h1>
+
+<p><a href="https://bestgems.org/gems/kettle-jem-appraisals"><img src="https://img.shields.io/gem/v/kettle-jem-appraisals.svg" alt="Version"></a> <a href="http://github.com/kettle-rb/kettle-jem-appraisals/releases"><img src="https://img.shields.io/github/tag/kettle-rb/kettle-jem-appraisals.svg" alt="GitHub tag (latest SemVer)"></a> <a href="AGPL-3.0-only.md"><img src="https://img.shields.io/badge/License-AGPL--3.0--only-259D6C.svg" alt="License: AGPL-3.0-only"></a> <a href="https://bestgems.org/gems/kettle-jem-appraisals"><img src="https://img.shields.io/gem/rd/kettle-jem-appraisals.svg" alt="Downloads Rank"></a> <a href="https://www.codetriage.com/kettle-rb/kettle-jem-appraisals"><img src="https://www.codetriage.com/kettle-rb/kettle-jem-appraisals/badges/users.svg" alt="Open Source Helpers"></a> <a href="https://codecov.io/gh/kettle-rb/kettle-jem-appraisals"><img src="https://codecov.io/gh/kettle-rb/kettle-jem-appraisals/graph/badge.svg" alt="CodeCov Test Coverage"></a> <a href="https://coveralls.io/github/kettle-rb/kettle-jem-appraisals?branch=main"><img src="https://coveralls.io/repos/github/kettle-rb/kettle-jem-appraisals/badge.svg?branch=main" alt="Coveralls Test Coverage"></a> <a href="https://qlty.sh/gh/kettle-rb/projects/kettle-jem-appraisals/metrics/code?sort=coverageRating"><img src="https://qlty.sh/gh/kettle-rb/projects/kettle-jem-appraisals/coverage.svg" alt="QLTY Test Coverage"></a> <a href="https://qlty.sh/gh/kettle-rb/projects/kettle-jem-appraisals"><img src="https://qlty.sh/gh/kettle-rb/projects/kettle-jem-appraisals/maintainability.svg" alt="QLTY Maintainability"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/heads.yml"><img src="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/heads.yml/badge.svg" alt="CI Heads"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/dep-heads.yml"><img src="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/dep-heads.yml/badge.svg" alt="CI Runtime Dependencies @ HEAD"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/current.yml"><img src="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/current.yml/badge.svg" alt="CI Current"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/truffle.yml"><img src="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/truffle.yml/badge.svg" alt="CI Truffle Ruby"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/jruby.yml"><img src="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/jruby.yml/badge.svg" alt="CI JRuby"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/locked_deps.yml"><img src="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/locked_deps.yml/badge.svg" alt="Deps Locked"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/unlocked_deps.yml"><img src="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/unlocked_deps.yml/badge.svg" alt="Deps Unlocked"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/coverage.yml"><img src="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/coverage.yml/badge.svg" alt="CI Test Coverage"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/style.yml"><img src="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/style.yml/badge.svg" alt="CI Style"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/security/code-scanning"><img src="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/codeql-analysis.yml/badge.svg" alt="CodeQL"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/license-eye.yml"><img src="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/license-eye.yml/badge.svg" alt="Apache SkyWalking Eyes License Compatibility Check"></a></p>
+
+<p><code>if ci_badges.map(&amp;:color).detect { it != "green"}</code> ☝️ <a href="https://discord.gg/3qme4XHNKN">let me know</a>, as I may have missed the <a href="https://discord.gg/3qme4XHNKN">discord notification</a>.</p>
+
+<hr>
+
+<p><code>if ci_badges.map(&amp;:color).all? { it == "green"}</code> 👇️ send money so I can do more of this. FLOSS maintenance is now my full-time job.</p>
+
+<p><a href="https://opencollective.com/kettle-rb#backer"><img src="https://opencollective.com/kettle-rb/backers/badge.svg?style=flat" alt="OpenCollective Backers"></a> <a href="https://opencollective.com/kettle-rb#sponsor"><img src="https://opencollective.com/kettle-rb/sponsors/badge.svg?style=flat" alt="OpenCollective Sponsors"></a> <a href="https://github.com/sponsors/pboling"><img src="https://img.shields.io/badge/Sponsor_Me!-pboling.svg?style=social&amp;logo=github" alt="Sponsor Me on Github"></a> <a href="https://liberapay.com/pboling/donate"><img src="https://img.shields.io/liberapay/goal/pboling.svg?logo=liberapay&amp;color=a51611&amp;style=flat" alt="Liberapay Goal Progress"></a> <a href="https://www.paypal.com/paypalme/peterboling"><img src="https://img.shields.io/badge/donate-paypal-a51611.svg?style=flat&amp;logo=paypal" alt="Donate on PayPal"></a> <a href="https://www.buymeacoffee.com/pboling"><img src="https://img.shields.io/badge/buy_me_a_coffee-%E2%9C%93-a51611.svg?style=flat" alt="Buy me a coffee"></a> <a href="https://polar.sh/pboling"><img src="https://img.shields.io/badge/polar-donate-a51611.svg?style=flat" alt="Donate on Polar"></a> <a href="https://ko-fi.com/pboling"><img src="https://img.shields.io/badge/ko--fi-%E2%9C%93-a51611.svg?style=flat" alt="Donate at ko-fi.com"></a></p>
+
+<details>
+    <summary>👣 How will this project approach the September 2025 hostile takeover of RubyGems? 🚑️</summary>
+
+I've summarized my thoughts in [this blog post](https://dev.to/galtzo/hostile-takeover-of-rubygems-my-thoughts-5hlo).
+
+</details>
+
+<h2 id="-synopsis">🌻 Synopsis</h2>
+
+<p><code>kettle-jem-appraisals</code> automates CI testing matrix generation for Ruby gems.<br>
+It reads your gemspec, queries the <a href="https://rubygems.org/api/v1/versions/">RubyGems API</a><br>
+to discover published versions of your runtime dependencies, detects Ruby-version<br>
+seam points (where <code>required_ruby_version</code> changes), and produces:</p>
+
+<ul>
+  <li>
+<strong>Modular gemfiles</strong> under <code>gemfiles/modular/{gem}/{ruby_series}/v{version}.gemfile</code>
+</li>
+  <li>An <strong>Appraisals</strong> file for use with <a href="https://github.com/appraisal-rb/appraisal2">appraisal2</a>
+</li>
+  <li>
+<strong>Workflow strategy</strong> matrix snippets for GitHub Actions CI</li>
+</ul>
+
+<p>If you want a lighter-weight DSL for the original<br>
+<a href="https://github.com/thoughtbot/appraisal"><code>appraisal</code></a> gem, consider<br>
+<a href="https://github.com/invoca/appraisal-matrix"><code>appraisal-matrix</code></a> instead.<br>
+<code>kettle-jem-appraisals</code> targets <strong><code>appraisal2</code></strong> (which supports <code>eval_gemfile</code>, and all ruby versions), while <code>appraisal-matrix</code><br>
+targets <strong><code>appraisal</code></strong> (which does not support <code>eval_gemfile</code>, and only supports modern ruby).</p>
+
+<h3 id="key-concepts">Key concepts</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Concept</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Tier 1</strong></td>
+      <td>Primary runtime dependencies whose version matrix you test against (e.g. <code>activerecord</code>, <code>mail</code>)</td>
+    </tr>
+    <tr>
+      <td><strong>Tier 2</strong></td>
+      <td>Secondary runtime dependencies cross-producted with tier 1 (e.g. <code>omniauth</code>)</td>
+    </tr>
+    <tr>
+      <td><strong>Ruby series</strong></td>
+      <td>Buckets like <code>r2.4</code>, <code>r2.6</code>, <code>r2</code>, <code>r3.1</code>, <code>r3</code> derived from min-ruby seam analysis</td>
+    </tr>
+    <tr>
+      <td><strong>Seam</strong></td>
+      <td>A version boundary where a gem’s <code>required_ruby_version</code> floor increases</td>
+    </tr>
+    <tr>
+      <td><strong>Mode</strong></td>
+      <td>Version selection strategy: <code>major</code>, <code>minor</code>, <code>patch</code>, <code>minor-minmax</code>, or <code>semver</code>
+</td>
+    </tr>
+    <tr>
+      <td><strong><code>kja-</code> prefix</strong></td>
+      <td>All generated appraisal names start with <code>kja-</code> for reliable cleanup on regeneration</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="-info-you-can-shake-a-stick-at">💡 Info you can shake a stick at</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Tokens to Remember</th>
+      <th>
+<a href="https://bestgems.org/gems/kettle-jem-appraisals"><img src="https://img.shields.io/badge/name-kettle--jem--appraisals-3C2D2D.svg?style=square&amp;logo=rubygems&amp;logoColor=red" alt="Gem name"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals"><img src="https://img.shields.io/badge/namespace-Kettle::Jem::Appraisals-3C2D2D.svg?style=square&amp;logo=ruby&amp;logoColor=white" alt="Gem namespace"></a>
+</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Works with JRuby</td>
+      <td>
+<a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/jruby.yml"><img src="https://img.shields.io/badge/JRuby-current-FBE742?style=for-the-badge&amp;logo=ruby&amp;logoColor=green" alt="JRuby current Compat"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/heads.yml"><img src="https://img.shields.io/badge/JRuby-HEAD-FBE742?style=for-the-badge&amp;logo=ruby&amp;logoColor=blue" alt="JRuby HEAD Compat"></a>
+</td>
+    </tr>
+    <tr>
+      <td>Works with Truffle Ruby</td>
+      <td>
+<a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/truffleruby-24.2.yml"><img src="https://img.shields.io/badge/Truffle_Ruby-24.2-34BCB1?style=for-the-badge&amp;logo=ruby&amp;logoColor=pink" alt="Truffle Ruby 24.2 Compat"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/truffleruby-25.0.yml"><img src="https://img.shields.io/badge/Truffle_Ruby-25.0-34BCB1?style=for-the-badge&amp;logo=ruby&amp;logoColor=pink" alt="Truffle Ruby 25.0 Compat"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/truffle.yml"><img src="https://img.shields.io/badge/Truffle_Ruby-current-34BCB1?style=for-the-badge&amp;logo=ruby&amp;logoColor=green" alt="Truffle Ruby current Compat"></a>
+</td>
+    </tr>
+    <tr>
+      <td>Works with MRI Ruby 4</td>
+      <td>
+<a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/current.yml"><img src="https://img.shields.io/badge/Ruby-4.0-CC342D?style=for-the-badge&amp;logo=ruby&amp;logoColor=white" alt="Ruby 4.0 Compat"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/current.yml"><img src="https://img.shields.io/badge/Ruby-current-CC342D?style=for-the-badge&amp;logo=ruby&amp;logoColor=green" alt="Ruby current Compat"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/heads.yml"><img src="https://img.shields.io/badge/Ruby-HEAD-CC342D?style=for-the-badge&amp;logo=ruby&amp;logoColor=blue" alt="Ruby HEAD Compat"></a>
+</td>
+    </tr>
+    <tr>
+      <td>Works with MRI Ruby 3</td>
+      <td>
+<a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/ruby-3.2.yml"><img src="https://img.shields.io/badge/Ruby-3.2-CC342D?style=for-the-badge&amp;logo=ruby&amp;logoColor=white" alt="Ruby 3.2 Compat"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/ruby-3.3.yml"><img src="https://img.shields.io/badge/Ruby-3.3-CC342D?style=for-the-badge&amp;logo=ruby&amp;logoColor=white" alt="Ruby 3.3 Compat"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/actions/workflows/ruby-3.4.yml"><img src="https://img.shields.io/badge/Ruby-3.4-CC342D?style=for-the-badge&amp;logo=ruby&amp;logoColor=white" alt="Ruby 3.4 Compat"></a>
+</td>
+    </tr>
+    <tr>
+      <td>Support &amp; Community</td>
+      <td>
+<a href="https://app.daily.dev/squads/rubyfriends"><img src="https://img.shields.io/badge/daily.dev-%F0%9F%92%8E_Ruby_Friends-0A0A0A?style=for-the-badge&amp;logo=dailydotdev&amp;logoColor=white" alt="Join Me on Daily.dev's RubyFriends"></a> <a href="https://discord.gg/3qme4XHNKN"><img src="https://img.shields.io/discord/1373797679469170758?style=for-the-badge&amp;logo=discord" alt="Live Chat on Discord"></a> <a href="https://www.upwork.com/freelancers/~014942e9b056abdf86?mp_source=share"><img src="https://img.shields.io/badge/UpWork-13544E?style=for-the-badge&amp;logo=Upwork&amp;logoColor=white" alt="Get help from me on Upwork"></a> <a href="https://www.codementor.io/peterboling?utm_source=github&amp;utm_medium=button&amp;utm_term=peterboling&amp;utm_campaign=github"><img src="https://img.shields.io/badge/CodeMentor-Get_Help-1abc9c?style=for-the-badge&amp;logo=CodeMentor&amp;logoColor=white" alt="Get help from me on Codementor"></a>
+</td>
+    </tr>
+    <tr>
+      <td>Source</td>
+      <td>
+<a href="https://gitlab.com/kettle-rb/kettle-jem-appraisals/"><img src="https://img.shields.io/badge/GitLab-FBA326?style=for-the-badge&amp;logo=Gitlab&amp;logoColor=orange" alt="Source on GitLab.com"></a> <a href="https://codeberg.org/kettle-rb/kettle-jem-appraisals"><img src="https://img.shields.io/badge/CodeBerg-4893CC?style=for-the-badge&amp;logo=CodeBerg&amp;logoColor=blue" alt="Source on CodeBerg.org"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals"><img src="https://img.shields.io/badge/GitHub-238636?style=for-the-badge&amp;logo=Github&amp;logoColor=green" alt="Source on Github.com"></a> <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"><img src="https://img.shields.io/badge/KLOC-5.053-FFDD67.svg?style=for-the-badge&amp;logo=YouTube&amp;logoColor=blue" alt="The best SHA: dQw4w9WgXcQ!"></a>
+</td>
+    </tr>
+    <tr>
+      <td>Documentation</td>
+      <td>
+<a href="http://rubydoc.info/gems/kettle-jem-appraisals"><img src="https://img.shields.io/badge/RubyDoc-Current_Release-943CD2?style=for-the-badge&amp;logo=readthedocs&amp;logoColor=white" alt="Current release on RubyDoc.info"></a> <a href="https://kettle-jem-appraisals.galtzo.com"><img src="https://img.shields.io/badge/YARD_on_Galtzo.com-HEAD-943CD2?style=for-the-badge&amp;logo=readthedocs&amp;logoColor=white" alt="YARD on Galtzo.com"></a> <a href="http://www.railsbling.com/tags/kettle-jem-appraisals"><img src="https://img.shields.io/badge/blog-railsbling-0093D0.svg?style=for-the-badge&amp;logo=rubyonrails&amp;logoColor=orange" alt="Maintainer Blog"></a> <a href="https://gitlab.com/kettle-rb/kettle-jem-appraisals/-/wikis/home"><img src="https://img.shields.io/badge/wiki-examples-943CD2.svg?style=for-the-badge&amp;logo=gitlab&amp;logoColor=white" alt="GitLab Wiki"></a> <a href="https://github.com/kettle-rb/kettle-jem-appraisals/wiki"><img src="https://img.shields.io/badge/wiki-examples-943CD2.svg?style=for-the-badge&amp;logo=github&amp;logoColor=white" alt="GitHub Wiki"></a>
+</td>
+    </tr>
+    <tr>
+      <td>Compliance</td>
+      <td>
+<a href="AGPL-3.0-only.md"><img src="https://img.shields.io/badge/License-AGPL--3.0--only-259D6C.svg" alt="License: AGPL-3.0-only"></a> <a href="https://www.apache.org/legal/resolved.html#category-x"><img src="https://img.shields.io/badge/Apache_Incompatible:_Category_X-%E2%9C%97-C0392B.svg?style=flat&amp;logo=Apache" alt="Apache license compatibility: Category X"></a> <a href="https://www.ilo.org/declaration/lang--en/index.htm"><img src="https://img.shields.io/badge/ILO_Fundamental_Principles-%E2%9C%93-259D6C.svg?style=flat" alt="📄ilo-declaration-img"></a> <a href="SECURITY.md"><img src="https://img.shields.io/badge/security-policy-259D6C.svg?style=flat" alt="Security Policy"></a> <a href="CODE_OF_CONDUCT.md"><img src="https://img.shields.io/badge/Contributor_Covenant-2.1-259D6C.svg" alt="Contributor Covenant 2.1"></a> <a href="https://semver.org/spec/v2.0.0.html"><img src="https://img.shields.io/badge/semver-2.0.0-259D6C.svg?style=flat" alt="SemVer 2.0.0"></a>
+</td>
+    </tr>
+    <tr>
+      <td>Style</td>
+      <td>
+<a href="https://github.com/rubocop-lts/rubocop-lts"><img src="https://img.shields.io/badge/code_style_&amp;_linting-rubocop--lts-34495e.svg?plastic&amp;logo=ruby&amp;logoColor=white" alt="Enforced Code Style Linter"></a> <a href="https://keepachangelog.com/en/1.0.0/"><img src="https://img.shields.io/badge/keep--a--changelog-1.0.0-34495e.svg?style=flat" alt="Keep-A-Changelog 1.0.0"></a> <a href="https://gitmoji.dev"><img src="https://img.shields.io/badge/gitmoji_commits-%20%F0%9F%98%9C%20%F0%9F%98%8D-34495e.svg?style=flat-square" alt="Gitmoji Commits"></a> <a href="https://github.com/appraisal-rb/appraisal2"><img src="https://img.shields.io/badge/appraised_by-appraisal2-34495e.svg?plastic&amp;logo=ruby&amp;logoColor=white" alt="Compatibility appraised by: appraisal2"></a>
+</td>
+    </tr>
+    <tr>
+      <td>Maintainer 🎖️</td>
+      <td>
+<a href="http://www.linkedin.com/in/peterboling"><img src="https://img.shields.io/badge/LinkedIn-Profile-0B66C2?style=flat&amp;logo=newjapanprowrestling" alt="Follow Me on LinkedIn"></a> <a href="https://ruby.social/@galtzo"><img src="https://img.shields.io/mastodon/follow/109447111526622197?domain=https://ruby.social&amp;style=flat&amp;logo=mastodon&amp;label=Ruby%20@galtzo" alt="Follow Me on Ruby.Social"></a> <a href="https://bsky.app/profile/galtzo.com"><img src="https://img.shields.io/badge/@galtzo.com-0285FF?style=flat&amp;logo=bluesky&amp;logoColor=white" alt="Follow Me on Bluesky"></a> <a href="http://www.railsbling.com/contact"><img src="https://img.shields.io/badge/Contact-Maintainer-0093D0.svg?style=flat&amp;logo=rubyonrails&amp;logoColor=red" alt="Contact Maintainer"></a> <a href="https://dev.to/galtzo"><img src="https://img.shields.io/badge/dev.to-0A0A0A?style=flat&amp;logo=devdotto&amp;logoColor=white" alt="My technical writing"></a>
+</td>
+    </tr>
+    <tr>
+      <td>
+<code>...</code> 💖</td>
+      <td>
+<a href="https://wellfound.com/u/peter-boling"><img src="https://img.shields.io/badge/peter--boling-orange?style=flat&amp;logo=wellfound" alt="Find Me on WellFound:"></a> <a href="https://www.crunchbase.com/person/peter-boling"><img src="https://img.shields.io/badge/peter--boling-purple?style=flat&amp;logo=crunchbase" alt="Find Me on CrunchBase"></a> <a href="https://linktr.ee/galtzo"><img src="https://img.shields.io/badge/galtzo-purple?style=flat&amp;logo=linktree" alt="My LinkTree"></a> <a href="https://about.me/peter.boling"><img src="https://img.shields.io/badge/about.me-0A0A0A?style=flat&amp;logo=aboutme&amp;logoColor=white" alt="More About Me"></a> <a href="https://codeberg.org/pboling">🧊</a> <a href="https://github.org/pboling">🐙</a>  <a href="https://sr.ht/~galtzo/">🛖</a> <a href="https://gitlab.com/pboling">🧪</a>
+</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="compatibility">Compatibility</h3>
+
+<p>Compatible with MRI Ruby 3.2.0+, and concordant releases of JRuby, and TruffleRuby.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>🚚 <em>Amazing</em> test matrix was brought to you by</th>
+      <th>🔎 appraisal2 🔎 and the color 💚 green 💚</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>👟 Check it out!</td>
+      <td>✨ <a href="https://github.com/appraisal-rb/appraisal2">github.com/appraisal-rb/appraisal2</a> ✨</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="federated-dvcs">Federated DVCS</h3>
+
+<details>
+  <summary>Find this repo on federated forges (Coming soon!)</summary>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Federated <a href="https://railsbling.com/posts/dvcs/put_the_d_in_dvcs/">DVCS</a> Repository</th>
+        <th>Status</th>
+        <th>Issues</th>
+        <th>PRs</th>
+        <th>Wiki</th>
+        <th>CI</th>
+        <th>Discussions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>🧪 <a href="https://gitlab.com/kettle-rb/kettle-jem-appraisals/">kettle-rb/kettle-jem-appraisals on GitLab</a>
+</td>
+        <td>The Truth</td>
+        <td><a href="https://gitlab.com/kettle-rb/kettle-jem-appraisals/-/issues">💚</a></td>
+        <td><a href="https://gitlab.com/kettle-rb/kettle-jem-appraisals/-/merge_requests">💚</a></td>
+        <td><a href="https://gitlab.com/kettle-rb/kettle-jem-appraisals/-/wikis/home">💚</a></td>
+        <td>🐭 Tiny Matrix</td>
+        <td>➖</td>
+      </tr>
+      <tr>
+        <td>🧊 <a href="https://codeberg.org/kettle-rb/kettle-jem-appraisals">kettle-rb/kettle-jem-appraisals on CodeBerg</a>
+</td>
+        <td>An Ethical Mirror (<a href="https://donate.codeberg.org/">Donate</a>)</td>
+        <td><a href="https://codeberg.org/kettle-rb/kettle-jem-appraisals/issues">💚</a></td>
+        <td><a href="https://codeberg.org/kettle-rb/kettle-jem-appraisals/pulls">💚</a></td>
+        <td>➖</td>
+        <td>⭕️ No Matrix</td>
+        <td>➖</td>
+      </tr>
+      <tr>
+        <td>🐙 <a href="https://github.com/kettle-rb/kettle-jem-appraisals">kettle-rb/kettle-jem-appraisals on GitHub</a>
+</td>
+        <td>Another Mirror</td>
+        <td><a href="https://github.com/kettle-rb/kettle-jem-appraisals/issues">💚</a></td>
+        <td><a href="https://github.com/kettle-rb/kettle-jem-appraisals/pulls">💚</a></td>
+        <td><a href="https://github.com/kettle-rb/kettle-jem-appraisals/wiki">💚</a></td>
+        <td>💯 Full Matrix</td>
+        <td><a href="https://github.com/kettle-rb/kettle-jem-appraisals/discussions">💚</a></td>
+      </tr>
+      <tr>
+        <td>🎮️ <a href="https://discord.gg/3qme4XHNKN">Discord Server</a>
+</td>
+        <td><a href="https://discord.gg/3qme4XHNKN"><img src="https://img.shields.io/discord/1373797679469170758?style=for-the-badge&amp;logo=discord" alt="Live Chat on Discord"></a></td>
+        <td><a href="https://discord.gg/3qme4XHNKN">Let’s</a></td>
+        <td><a href="https://discord.gg/3qme4XHNKN">talk</a></td>
+        <td><a href="https://discord.gg/3qme4XHNKN">about</a></td>
+        <td><a href="https://discord.gg/3qme4XHNKN">this</a></td>
+        <td><a href="https://discord.gg/3qme4XHNKN">library!</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+</details>
+
+<h3 id="enterprise-support-">Enterprise Support <a href="https://tidelift.com/subscription/pkg/rubygems-kettle-jem-appraisals?utm_source=rubygems-kettle-jem-appraisals&amp;utm_medium=referral&amp;utm_campaign=readme"><img src="https://tidelift.com/badges/package/rubygems/kettle-jem-appraisals" alt="Tidelift"></a>
+</h3>
+
+<p>Available as part of the Tidelift Subscription.</p>
+
+<details>
+  <summary>Need enterprise-level guarantees?</summary>
+
+  <p>The maintainers of this and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source packages you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact packages you use.</p>
+
+  <p><a href="https://tidelift.com/subscription/pkg/rubygems-kettle-jem-appraisals?utm_source=rubygems-kettle-jem-appraisals&amp;utm_medium=referral&amp;utm_campaign=readme"><img src="https://img.shields.io/badge/Tidelift_and_Sonar-Enterprise_Support-FD3456?style=for-the-badge&amp;logo=sonar&amp;logoColor=white" alt="Get help from me on Tidelift"></a></p>
+
+  <ul>
+    <li>💡Subscribe for support guarantees covering <em>all</em> your FLOSS dependencies</li>
+    <li>💡Tidelift is part of <a href="https://blog.tidelift.com/tidelift-joins-sonar">Sonar</a>
+</li>
+    <li>💡Tidelift pays maintainers to maintain the software you depend on!<br>📊<code>@</code>Pointy Haired Boss: An <a href="https://tidelift.com/subscription/pkg/rubygems-kettle-jem-appraisals?utm_source=rubygems-kettle-jem-appraisals&amp;utm_medium=referral&amp;utm_campaign=readme">enterprise support</a> subscription is “<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">never gonna let you down</a>”, and <em>supports</em> open source maintainers</li>
+  </ul>
+
+  <p>Alternatively:</p>
+
+  <ul>
+    <li><a href="https://discord.gg/3qme4XHNKN"><img src="https://img.shields.io/discord/1373797679469170758?style=for-the-badge&amp;logo=discord" alt="Live Chat on Discord"></a></li>
+    <li><a href="https://www.upwork.com/freelancers/~014942e9b056abdf86?mp_source=share"><img src="https://img.shields.io/badge/UpWork-13544E?style=for-the-badge&amp;logo=Upwork&amp;logoColor=white" alt="Get help from me on Upwork"></a></li>
+    <li><a href="https://www.codementor.io/peterboling?utm_source=github&amp;utm_medium=button&amp;utm_term=peterboling&amp;utm_campaign=github"><img src="https://img.shields.io/badge/CodeMentor-Get_Help-1abc9c?style=for-the-badge&amp;logo=CodeMentor&amp;logoColor=white" alt="Get help from me on Codementor"></a></li>
+  </ul>
+
+</details>
+
+<h2 id="-installation">✨ Installation</h2>
+
+<p>Install the gem and add to the application’s Gemfile by executing:</p>
+
+<pre class="code language-console"><code class="language-console">bundle add kettle-jem-appraisals
+</code></pre>
+
+<p>If bundler is not being used to manage dependencies, install the gem by executing:</p>
+
+<pre class="code language-console"><code class="language-console">gem install kettle-jem-appraisals
+</code></pre>
+
+<h3 id="-secure-installation">🔒 Secure Installation</h3>
+
+<details>
+  <summary>For Medium or High Security Installations</summary>
+
+  <p>This gem is cryptographically signed and has verifiable <a href="https://gitlab.com/kettle-rb/kettle-jem-appraisals/-/tree/main/checksums">SHA-256 and SHA-512</a> checksums by
+<a href="https://github.com/galtzo-floss/stone_checksums">stone_checksums</a>. Be sure the gem you install hasn’t been tampered with
+by following the instructions below.</p>
+
+  <p>Add my public key (if you haven’t already; key expires 2045-04-29) as a trusted certificate:</p>
+
+  <pre class="code language-console"><code class="language-console">gem cert --add &lt;(curl -Ls https://raw.github.com/galtzo-floss/certs/main/pboling.pem)
+</code></pre>
+
+  <p>You only need to do that once.  Then proceed to install with:</p>
+
+  <pre class="code language-console"><code class="language-console">gem install kettle-jem-appraisals -P HighSecurity
+</code></pre>
+
+  <p>The <code>HighSecurity</code> trust profile will verify signed gems, and not allow the installation of unsigned dependencies.</p>
+
+  <p>If you want to up your security game full-time:</p>
+
+  <pre class="code language-console"><code class="language-console">bundle config set --global trust-policy MediumSecurity
+</code></pre>
+
+  <p><code>MediumSecurity</code> instead of <code>HighSecurity</code> is necessary if not all the gems you use are signed.</p>
+
+  <p>NOTE: Be prepared to track down certs for signed gems and add them the same way you added mine.</p>
+
+</details>
+
+<h2 id="️-configuration">⚙️ Configuration</h2>
+
+<p>Configuration lives in <code>.kettle-jem.yml</code> under the <code>appraisal_matrix</code> key.<br>
+Running <code>--scaffold</code> creates a starter config from your gemspec.</p>
+
+<h3 id="config-schema">Config schema</h3>
+
+<pre class="code language-yaml"><code class="language-yaml">appraisal_matrix:
+  # Global version selection mode (default: semver)
+  # Per-gem overrides via the &quot;mode&quot; key on individual gem entries.
+  mode: semver
+
+  # Seconds before a resolved matrix is considered stale (default: 604800 = 7 days).
+  # Use --force to bypass.
+  freshness_ttl: 604800
+
+  # Command to run in CI for each appraisal entry (default: &quot;rake spec&quot;)
+  exec_cmd: &quot;rake spec&quot;
+
+  gems:
+    # Tier 1: primary dependencies whose versions drive the matrix.
+    # Each tier1 version is assigned to its optimal Ruby bucket.
+    tier1:
+      - name: activerecord
+        # Optional requirements filter
+        requirements:
+          - &quot;&gt;= 6.1&quot;
+          - &quot;&lt; 8.0&quot;
+        # Optional exact-version allowlist, added on top of mode + requirements
+        include_versions:
+          - &quot;8.0.1&quot;
+        # Optional exact-version denylist, removed from the final matrix
+        exclude_versions:
+          - &quot;7.2&quot;
+      - name: mail
+        mode: major  # per-gem mode override
+
+    # Optional tier1_mode: default mode for all tier1 gems (overrides global mode)
+    # tier1_mode: minor-minmax
+
+    # Tier 2: secondary dependencies cross-producted with tier1.
+    # Omit if your gem has only one primary dependency.
+    tier2:
+      - name: omniauth
+
+    # Optional tier2_mode: default mode for all tier2 gems
+    # tier2_mode: major
+</code></pre>
+
+<h3 id="version-selection-modes">Version selection modes</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Mode</th>
+      <th>Selects</th>
+      <th>Best for</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>major</code></td>
+      <td>Latest minor of each major version</td>
+      <td>Large gems with many majors (e.g. Rails)</td>
+    </tr>
+    <tr>
+      <td><code>minor</code></td>
+      <td>Every minor version across all majors</td>
+      <td>Small gems with few versions</td>
+    </tr>
+    <tr>
+      <td><code>patch</code></td>
+      <td>Every matching patch version</td>
+      <td>Tight compatibility windows or regression-focused matrices</td>
+    </tr>
+    <tr>
+      <td><code>minor-minmax</code></td>
+      <td>First + last minor per older major; all minors of current major</td>
+      <td>Balanced coverage</td>
+    </tr>
+    <tr>
+      <td><code>semver</code></td>
+      <td>Latest minor per older major + Ruby-cutoff minors + all minors of current major unless that major is large, then latest + cutoffs</td>
+      <td>
+<strong>Default</strong> — best signal-to-noise ratio</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="per-gem-requirements">Per-gem requirements</h3>
+
+<p>Each gem entry may further restrict the resolved version set with<br>
+<code>requirements</code>. Values can be a string or an array of RubyGems<br>
+requirement strings.</p>
+
+<pre class="code language-yaml"><code class="language-yaml">appraisal_matrix:
+  gems:
+    tier1:
+      - name: activerecord
+        mode: patch
+        requirements:
+          - &quot;&gt;= 7.1&quot;
+          - &quot;&lt; 7.2&quot;
+      - name: sequel
+        requirements:
+          - &quot;&gt;= 5.0&quot;
+          - &quot;&lt; 6.0&quot;
+</code></pre>
+
+<p>Those filters apply both to version selection and to Ruby seam detection, so<br>
+the generated buckets stay aligned with the versions you actually intend to<br>
+test.</p>
+
+<h3 id="per-gem-include_versions">Per-gem include_versions</h3>
+
+<p>Each gem entry may also specify <code>include_versions</code>, an explicit allowlist of<br>
+additional versions to union into the matrix.</p>
+
+<pre class="code language-yaml"><code class="language-yaml">appraisal_matrix:
+  gems:
+    tier1:
+      - name: activerecord
+        mode: semver
+        requirements:
+          - &quot;&gt;= 7.1&quot;
+          - &quot;&lt; 7.2&quot;
+        include_versions:
+          - &quot;6.0.9&quot;
+          - &quot;8.0.1&quot;
+</code></pre>
+
+<p><code>include_versions</code> is <strong>additive</strong>:</p>
+
+<ul>
+  <li>versions listed there are added even if they fall outside <code>requirements</code>
+</li>
+  <li>versions listed there are added even if the selected <code>mode</code> would not normally include them</li>
+  <li>the final generated matrix is the union of <code>mode</code> results, <code>requirements</code> filtering, and <code>include_versions</code>
+</li>
+</ul>
+
+<h3 id="per-gem-exclude_versions">Per-gem exclude_versions</h3>
+
+<p>Each gem entry may also specify <code>exclude_versions</code>, an explicit denylist of<br>
+exact versions to remove from the resolved matrix.</p>
+
+<pre class="code language-yaml"><code class="language-yaml">appraisal_matrix:
+  gems:
+    tier1:
+      - name: activerecord
+        mode: semver
+        requirements:
+          - &quot;&gt;= 7.1&quot;
+          - &quot;&lt; 7.2&quot;
+        include_versions:
+          - &quot;6.0.9&quot;
+          - &quot;8.0.1&quot;
+        exclude_versions:
+          - &quot;7.1.0&quot;
+          - &quot;8.0.1&quot;
+</code></pre>
+
+<p><code>exclude_versions</code> is applied <strong>after</strong> mode selection, <code>requirements</code>, and<br>
+<code>include_versions</code>, so the final set is:</p>
+
+<ul>
+  <li>start with the versions selected by <code>mode</code>
+</li>
+  <li>filter that set with <code>requirements</code>
+</li>
+  <li>union in <code>include_versions</code>
+</li>
+  <li>subtract <code>exclude_versions</code>
+</li>
+</ul>
+
+<h4 id="semver-pruning">Semver pruning</h4>
+
+<p>When a single major version has more than 9 minor releases (e.g. <code>aws-sdk-dynamodb</code><br>
+with 166 minors in major 1), semver mode automatically prunes to:</p>
+
+<ul>
+  <li>The <strong>latest minor</strong> of that major</li>
+  <li>Any minor that is the <strong>last before a Ruby version is dropped</strong> (Ruby-cutoff versions)</li>
+</ul>
+
+<p>This prevents matrix explosion while preserving meaningful coverage.</p>
+
+<h3 id="appraisal-naming">Appraisal naming</h3>
+
+<p>All generated names are prefixed with <code>kja-</code> (kettle-jem-appraisals) so that<br>
+regeneration can reliably identify and remove stale entries.</p>
+
+<p>Format: <code>kja-{tier1}-{t1ver}-{tier2}-{t2ver}-{ruby}</code></p>
+
+<p>Common gem abbreviations are applied automatically:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Gem</th>
+      <th>Abbreviation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>activerecord</code></td>
+      <td><code>ar</code></td>
+    </tr>
+    <tr>
+      <td><code>activesupport</code></td>
+      <td><code>as</code></td>
+    </tr>
+    <tr>
+      <td><code>omniauth</code></td>
+      <td><code>oa</code></td>
+    </tr>
+    <tr>
+      <td><code>mongoid</code></td>
+      <td><code>mo</code></td>
+    </tr>
+    <tr>
+      <td><code>sequel</code></td>
+      <td><code>sq</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Examples: <code>kja-ar-7-1-oa-2-1-r3</code>, <code>kja-mail-2-8-r3</code> (tier1-only)</p>
+
+<h3 id="optimal-bucket-assignment">Optimal bucket assignment</h3>
+
+<p>Rather than cross-producting every gem version with every Ruby series,<br>
+each tier1 version is assigned to its <strong>optimal bucket</strong> — the newest Ruby<br>
+where that version is the best (latest) choice. Gaps are backfilled automatically.</p>
+
+<p>Example with <code>activerecord</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Version</th>
+      <th>Optimal bucket</th>
+      <th>Reason</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>AR 5.2</td>
+      <td><code>r2.4</code></td>
+      <td>Next seam (AR 6.0) needs Ruby ≥2.5; newest Ruby below is 2.4</td>
+    </tr>
+    <tr>
+      <td>AR 6.1</td>
+      <td><code>r2.6</code></td>
+      <td>Next seam (AR 7.0) needs Ruby ≥2.7; newest Ruby below is 2.6</td>
+    </tr>
+    <tr>
+      <td>AR 7.1</td>
+      <td><code>r2</code></td>
+      <td>Next seam (AR 7.2) needs Ruby ≥3.1; newest Ruby below is 2.7</td>
+    </tr>
+    <tr>
+      <td>AR 7.2</td>
+      <td><code>r3.1</code></td>
+      <td>Next seam (AR 8.0) needs Ruby ≥3.2; newest Ruby below is 3.1</td>
+    </tr>
+    <tr>
+      <td>AR 8.1</td>
+      <td><code>r3</code></td>
+      <td>Catch-all latest bucket</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="-basic-usage">🔧 Basic Usage</h2>
+
+<h3 id="two-step-workflow">Two-step workflow</h3>
+
+<p><strong>Step 1 — Scaffold</strong> reads your gemspec and populates <code>.kettle-jem.yml</code>:</p>
+
+<pre class="code language-sh"><code class="language-sh">kettle-jem-appraisals --scaffold
+</code></pre>
+
+<p>Review the generated config: move gems between <code>tier1</code> and <code>tier2</code>,<br>
+set per-gem <code>mode</code> overrides, and remove any gems you don’t want in the matrix.</p>
+
+<p><strong>Step 2 — Resolve</strong> queries RubyGems, computes the matrix, and writes files:</p>
+
+<pre class="code language-sh"><code class="language-sh">kettle-jem-appraisals --resolve
+</code></pre>
+
+<p>This generates:</p>
+<ul>
+  <li>
+<code>gemfiles/modular/{gem}/{ruby_series}/v{version}.gemfile</code> — one per version×bucket</li>
+  <li>
+<code>Appraisals</code> — references the modular gemfiles</li>
+  <li>Runs <code>bin/appraisal generate</code> to create flat gemfiles (if binstub exists)</li>
+</ul>
+
+<h3 id="cli-flags">CLI flags</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Flag</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>--scaffold</code></td>
+      <td>Force scaffold mode (even if config exists)</td>
+    </tr>
+    <tr>
+      <td><code>--resolve</code></td>
+      <td>Force resolve mode</td>
+    </tr>
+    <tr>
+      <td><code>--force</code></td>
+      <td>Bypass freshness TTL and re-resolve</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Without flags, the CLI auto-detects: scaffold if no versions are configured,<br>
+resolve otherwise.</p>
+
+<h3 id="re-resolving">Re-resolving</h3>
+
+<p>The resolved matrix is timestamped. Subsequent runs within <code>freshness_ttl</code><br>
+seconds are skipped unless <code>--force</code> is passed. Stale <code>kja-*</code> flat gemfiles<br>
+from previous runs are automatically cleaned up.</p>
+
+<h3 id="example-sanitize_email-tier1-only">Example: sanitize_email (tier1-only)</h3>
+
+<pre class="code language-yaml"><code class="language-yaml">appraisal_matrix:
+  mode: semver
+  gems:
+    tier1:
+      - name: mail
+</code></pre>
+
+<p>Produces ~5 entries like <code>kja-mail-2-7-r2.4</code>, <code>kja-mail-2-8-r3</code>.</p>
+
+<h3 id="example-omniauth-identity-tier1--tier2">Example: omniauth-identity (tier1 + tier2)</h3>
+
+<pre class="code language-yaml"><code class="language-yaml">appraisal_matrix:
+  mode: semver
+  gems:
+    tier1:
+      - name: activerecord
+      - name: sequel
+        mode: major
+    tier2:
+      - name: omniauth
+</code></pre>
+
+<p>Produces entries like <code>kja-ar-7-1-oa-2-1-r3</code>, <code>kja-sq-5-0-oa-2-1-r3</code>.</p>
+
+<h3 id="workflow-strategy-output">Workflow strategy output</h3>
+
+<p>The resolve step also generates CI lifecycle groupings:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Lifecycle</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>supported</code></td>
+      <td>Current Ruby series (actively maintained)</td>
+    </tr>
+    <tr>
+      <td><code>legacy</code></td>
+      <td>Older Ruby series (maintenance mode)</td>
+    </tr>
+    <tr>
+      <td><code>unsupported</code></td>
+      <td>Ruby versions past EOL</td>
+    </tr>
+    <tr>
+      <td><code>ancient</code></td>
+      <td>Very old Ruby (best-effort)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>These map to separate GitHub Actions workflow files for tiered CI execution.</p>
+
+<h2 id="-floss-funding">🦷 FLOSS Funding</h2>
+
+<p>While kettle-rb tools are free software and will always be, the project would benefit immensely from some funding.<br>
+Raising a monthly budget of… “dollars” would make the project more sustainable.</p>
+
+<p>We welcome both individual and corporate sponsors! We also offer a<br>
+wide array of funding channels to account for your preferences<br>
+(although currently <a href="https://opencollective.com/kettle-rb">Open Collective</a> is our preferred funding platform).</p>
+
+<p><strong>If you’re working in a company that’s making significant use of kettle-rb tools we’d<br>
+appreciate it if you suggest to your company to become a kettle-rb sponsor.</strong></p>
+
+<p>You can support the development of kettle-rb tools via<br>
+<a href="https://github.com/sponsors/pboling">GitHub Sponsors</a>,<br>
+<a href="https://liberapay.com/pboling/donate">Liberapay</a>,<br>
+<a href="https://www.paypal.com/paypalme/peterboling">PayPal</a>,<br>
+<a href="https://opencollective.com/kettle-rb">Open Collective</a><br>
+and <a href="https://tidelift.com/subscription/pkg/rubygems-kettle-jem-appraisals?utm_source=rubygems-kettle-jem-appraisals&amp;utm_medium=referral&amp;utm_campaign=readme">Tidelift</a>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>📍 NOTE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>If doing a sponsorship in the form of donation is problematic for your company <br> from an accounting standpoint, we’d recommend the use of Tidelift, <br> where you can get a support-like subscription instead.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="open-collective-for-individuals">Open Collective for Individuals</h3>
+
+<p>Support us with a monthly donation and help us continue our activities. [<a href="https://opencollective.com/kettle-rb#backer">Become a backer</a>]</p>
+
+<p>NOTE: <a href="https://github.com/kettle-rb/kettle-jem-appraisals/blob/main/exe/kettle-readme-backers">kettle-readme-backers</a> updates this list every day, automatically.</p>
+
+<!-- OPENCOLLECTIVE-INDIVIDUALS:START -->
+<p>No backers yet. Be the first!<br>
+<!-- OPENCOLLECTIVE-INDIVIDUALS:END --></p>
+
+<h3 id="open-collective-for-organizations">Open Collective for Organizations</h3>
+
+<p>Become a sponsor and get your logo on our README on GitHub with a link to your site. [<a href="https://opencollective.com/kettle-rb#sponsor">Become a sponsor</a>]</p>
+
+<p>NOTE: <a href="https://github.com/kettle-rb/kettle-jem-appraisals/blob/main/exe/kettle-readme-backers">kettle-readme-backers</a> updates this list every day, automatically.</p>
+
+<!-- OPENCOLLECTIVE-ORGANIZATIONS:START -->
+<p>No sponsors yet. Be the first!<br>
+<!-- OPENCOLLECTIVE-ORGANIZATIONS:END --></p>
+
+<h3 id="another-way-to-support-open-source">Another way to support open-source</h3>
+
+<p>I’m driven by a passion to foster a thriving open-source community – a space where people can tackle complex problems, no matter how small.  Revitalizing libraries that have fallen into disrepair, and building new libraries focused on solving real-world challenges, are my passions.  I was recently affected by layoffs, and the tech jobs market is unwelcoming. I’m reaching out here because your support would significantly aid my efforts to provide for my family, and my farm (11 🐔 chickens, 2 🐶 dogs, 3 🐰 rabbits, 8 🐈‍ cats).</p>
+
+<p>If you work at a company that uses my work, please encourage them to support me as a corporate sponsor. My work on gems you use might show up in <code>bundle fund</code>.</p>
+
+<p>I’m developing a new library, <a href="https://github.com/galtzo-floss/floss_funding">floss_funding</a>, designed to empower open-source developers like myself to get paid for the work we do, in a sustainable way. Please give it a look.</p>
+
+<p><strong><a href="https://floss-funding.dev">Floss-Funding.dev</a>: 👉️ No network calls. 👉️ No tracking. 👉️ No oversight. 👉️ Minimal crypto hashing. 💡 Easily disabled nags</strong></p>
+
+<p><a href="https://opencollective.com/kettle-rb#backer"><img src="https://opencollective.com/kettle-rb/backers/badge.svg?style=flat" alt="OpenCollective Backers"></a> <a href="https://opencollective.com/kettle-rb#sponsor"><img src="https://opencollective.com/kettle-rb/sponsors/badge.svg?style=flat" alt="OpenCollective Sponsors"></a> <a href="https://github.com/sponsors/pboling"><img src="https://img.shields.io/badge/Sponsor_Me!-pboling.svg?style=social&amp;logo=github" alt="Sponsor Me on Github"></a> <a href="https://liberapay.com/pboling/donate"><img src="https://img.shields.io/liberapay/goal/pboling.svg?logo=liberapay&amp;color=a51611&amp;style=flat" alt="Liberapay Goal Progress"></a> <a href="https://www.paypal.com/paypalme/peterboling"><img src="https://img.shields.io/badge/donate-paypal-a51611.svg?style=flat&amp;logo=paypal" alt="Donate on PayPal"></a> <a href="https://www.buymeacoffee.com/pboling"><img src="https://img.shields.io/badge/buy_me_a_coffee-%E2%9C%93-a51611.svg?style=flat" alt="Buy me a coffee"></a> <a href="https://polar.sh/pboling"><img src="https://img.shields.io/badge/polar-donate-a51611.svg?style=flat" alt="Donate on Polar"></a> <a href="https://ko-fi.com/pboling"><img src="https://img.shields.io/badge/ko--fi-%E2%9C%93-a51611.svg?style=flat" alt="Donate to my FLOSS efforts at ko-fi.com"></a> <a href="https://patreon.com/galtzo"><img src="https://img.shields.io/badge/patreon-donate-a51611.svg?style=flat" alt="Donate to my FLOSS efforts using Patreon"></a></p>
+
+<h2 id="-security">🔐 Security</h2>
+
+<p>See <a href="SECURITY.md">SECURITY.md</a>.</p>
+
+<h2 id="-contributing">🤝 Contributing</h2>
+
+<p>If you need some ideas of where to help, you could work on adding more code coverage,<br>
+or if it is already 💯 (see <a href="#code-coverage">below</a>) check <a href="REEK">reek</a>, <a href="https://github.com/kettle-rb/kettle-jem-appraisals/issues">issues</a>, or <a href="https://github.com/kettle-rb/kettle-jem-appraisals/pulls">PRs</a>,<br>
+or use the gem and think about how it could be better.</p>
+
+<p>We <a href="https://keepachangelog.com/en/1.0.0/"><img src="https://img.shields.io/badge/keep--a--changelog-1.0.0-34495e.svg?style=flat" alt="Keep A Changelog"></a> so if you make changes, remember to update it.</p>
+
+<p>See <a href="CONTRIBUTING.md">CONTRIBUTING.md</a> for more detailed instructions.</p>
+
+<h3 id="-release-instructions">🚀 Release Instructions</h3>
+
+<p>See <a href="CONTRIBUTING.md">CONTRIBUTING.md</a>.</p>
+
+<h3 id="code-coverage">Code Coverage</h3>
+
+<p><a href="https://codecov.io/gh/kettle-rb/kettle-jem-appraisals"><img src="https://codecov.io/gh/kettle-rb/kettle-jem-appraisals/graphs/tree.svg" alt="Coverage Graph"></a></p>
+
+<p><a href="https://coveralls.io/github/kettle-rb/kettle-jem-appraisals?branch=main"><img src="https://coveralls.io/repos/github/kettle-rb/kettle-jem-appraisals/badge.svg?branch=main" alt="Coveralls Test Coverage"></a></p>
+
+<p><a href="https://qlty.sh/gh/kettle-rb/projects/kettle-jem-appraisals/metrics/code?sort=coverageRating"><img src="https://qlty.sh/gh/kettle-rb/projects/kettle-jem-appraisals/coverage.svg" alt="QLTY Test Coverage"></a></p>
+
+<h3 id="-code-of-conduct">🪇 Code of Conduct</h3>
+
+<p>Everyone interacting with this project’s codebases, issue trackers,<br>
+chat rooms and mailing lists agrees to follow the <a href="CODE_OF_CONDUCT.md"><img src="https://img.shields.io/badge/Contributor_Covenant-2.1-259D6C.svg" alt="Contributor Covenant 2.1"></a>.</p>
+
+<h2 id="-contributors">🌈 Contributors</h2>
+
+<p><a href="https://github.com/kettle-rb/kettle-jem-appraisals/graphs/contributors"><img src="https://contrib.rocks/image?repo=kettle-rb/kettle-jem-appraisals" alt="Contributors"></a></p>
+
+<p>Made with <a href="https://contrib.rocks">contributors-img</a>.</p>
+
+<p>Also see GitLab Contributors: <a href="https://gitlab.com/kettle-rb/kettle-jem-appraisals/-/graphs/main">https://gitlab.com/kettle-rb/kettle-jem-appraisals/-/graphs/main</a></p>
+
+<details>
+    <summary>⭐️ Star History</summary>
+
+<a href="https://star-history.com/#kettle-rb/kettle-jem-appraisals&amp;Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=kettle-rb/kettle-jem-appraisals&amp;type=Date&amp;theme=dark"></source>
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=kettle-rb/kettle-jem-appraisals&amp;type=Date"></source>
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=kettle-rb/kettle-jem-appraisals&amp;type=Date">
+ </picture>
+</a>
+
+</details>
+
+<h2 id="-versioning">📌 Versioning</h2>
+
+<p>This Library adheres to <a href="https://semver.org/spec/v2.0.0.html"><img src="https://img.shields.io/badge/semver-2.0.0-259D6C.svg?style=flat" alt="Semantic Versioning 2.0.0"></a>.<br>
+Violations of this scheme should be reported as bugs.<br>
+Specifically, if a minor or patch version is released that breaks backward compatibility,<br>
+a new version should be immediately released that restores compatibility.<br>
+Breaking changes to the public API will only be introduced with new major versions.</p>
+
+<blockquote>
+  <p>dropping support for a platform is both obviously and objectively a breaking change <br><br>
+—Jordan Harband (<a href="https://github.com/ljharb">@ljharb</a>, maintainer of SemVer) <a href="https://github.com/semver/semver/issues/716#issuecomment-869336139">in SemVer issue 716</a></p>
+</blockquote>
+
+<p>I understand that policy doesn’t work universally (“exceptions to every rule!”),<br>
+but it is the policy here.<br>
+As such, in many cases it is good to specify a dependency on this library using<br>
+the <a href="http://guides.rubygems.org/patterns/#pessimistic-version-constraint">Pessimistic Version Constraint</a> with two digits of precision.</p>
+
+<p>For example:</p>
+
+<pre class="code language-ruby"><code class="language-ruby">spec.add_dependency(&quot;kettle-jem-appraisals&quot;, &quot;~&gt; 0.0&quot;)
+</code></pre>
+
+<details>
+  <summary>📌 Is "Platform Support" part of the public API? More details inside.</summary>
+
+  <p>SemVer should, IMO, but doesn’t explicitly, say that dropping support for specific Platforms
+is a <em>breaking change</em> to an API, and for that reason the bike shedding is endless.</p>
+
+  <p>To get a better understanding of how SemVer is intended to work over a project’s lifetime,
+read this article from the creator of SemVer:</p>
+
+  <ul>
+    <li><a href="https://tom.preston-werner.com/2022/05/23/major-version-numbers-are-not-sacred.html">“Major Version Numbers are Not Sacred”</a></li>
+  </ul>
+
+</details>
+
+<p>See <a href="CHANGELOG.md">CHANGELOG.md</a> for a list of releases.</p>
+
+<h2 id="-license">📄 License</h2>
+
+<p>The gem is available under the following license: <a href="AGPL-3.0-only.md">AGPL-3.0-only</a>.<br>
+See <a href="LICENSE.md">LICENSE.md</a> for details.</p>
+
+<p>If none of the available licenses suit your use case, please <a href="mailto:floss@galtzo.com">contact us</a> to discuss a custom commercial license.</p>
+
+<h3 id="-copyright">© Copyright</h3>
+
+<p>See <a href="LICENSE.md">LICENSE.md</a> for the official copyright notice.</p>
+
+<h2 id="-a-request-for-help">🤑 A request for help</h2>
+
+<p>Maintainers have teeth and need to pay their dentists.<br>
+After getting laid off in an RIF in March, and encountering difficulty finding a new one,<br>
+I began spending most of my time building open source tools.<br>
+I’m hoping to be able to pay for my kids’ health insurance this month,<br>
+so if you value the work I am doing, I need your support.<br>
+Please consider sponsoring me or the project.</p>
+
+<p>To join the community or get help 👇️ Join the Discord.</p>
+
+<p><a href="https://discord.gg/3qme4XHNKN"><img src="https://img.shields.io/discord/1373797679469170758?style=for-the-badge&amp;logo=discord" alt="Live Chat on Discord"></a></p>
+
+<p>To say “thanks!” ☝️ Join the Discord or 👇️ send money.</p>
+
+<p><a href="https://opencollective.com/kettle-rb"><img src="https://img.shields.io/opencollective/all/kettle-rb?style=for-the-badge" alt="Sponsor kettle-rb/kettle-jem-appraisals on Open Source Collective"></a> 💌 <a href="https://github.com/sponsors/pboling"><img src="https://img.shields.io/badge/Sponsor_Me!-pboling-blue?style=for-the-badge&amp;logo=github" alt="Sponsor me on GitHub Sponsors"></a> 💌 <a href="https://liberapay.com/pboling/donate"><img src="https://img.shields.io/liberapay/goal/pboling.svg?style=for-the-badge&amp;logo=liberapay&amp;color=a51611" alt="Sponsor me on Liberapay"></a> 💌 <a href="https://www.paypal.com/paypalme/peterboling"><img src="https://img.shields.io/badge/donate-paypal-a51611.svg?style=for-the-badge&amp;logo=paypal&amp;color=0A0A0A" alt="Donate on PayPal"></a></p>
+
+<h3 id="please-give-the-project-a-star--">Please give the project a star ⭐ ♥.</h3>
+
+<p>Thanks for RTFM. ☺️</p>
+
+</div></div>
+
+      <div id="footer">
+  Generated on Sun Apr 12 11:49:28 2026 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.39 (ruby-4.0.2).
+</div>
+
+    </div>
+  </body>
+</html>

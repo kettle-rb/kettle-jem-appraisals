@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Kettle::Jem::Appraisals::MatrixBuilder
+  
+    &mdash; Documentation by YARD 0.9.39
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Kettle::Jem::Appraisals::MatrixBuilder";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (M)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../Kettle.html" title="Kettle (module)">Kettle</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Jem.html" title="Kettle::Jem (module)">Jem</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Appraisals.html" title="Kettle::Jem::Appraisals (module)">Appraisals</a></span></span>
+     &raquo; 
+    <span class="title">MatrixBuilder</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Kettle::Jem::Appraisals::MatrixBuilder
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Kettle::Jem::Appraisals::MatrixBuilder</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/kettle/jem/appraisals/matrix_builder.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>Selects gem versions according to the configured mode and assigns<br />
+each version to its optimal Ruby bucket.</p>
+
+<p>The optimal bucket for a gem version V is the NEWEST Ruby where V is<br />
+the best (latest) choice — i.e., the Ruby just below the next version’s<br />
++min_ruby+ requirement. This is the inverted perspective: not “what’s the<br />
+minimum Ruby this gem needs?” but “what’s the newest Ruby where you’d<br />
+still use this gem version?”</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Bucket assignment for activerecord</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='comment'># AR 5.2 (min_ruby=2.2) → optimal on r2.4 (Ruby 2.4 is newest before AR 6.0 needs 2.5)
+</span><span class='comment'># AR 7.2 (min_ruby=3.1) → optimal on r3.1 (Ruby 3.1 is newest before AR 8.0 needs 3.2)
+</span><span class='comment'># AR 8.1 (min_ruby=3.2) → optimal on r3   (catch-all, latest)</span></code></pre>
+    
+  </div>
+
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="VALID_MODES-constant" class="">VALID_MODES =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Returns valid mode strings accepted by <span class='object_link'><a href="#select_versions-instance_method" title="Kettle::Jem::Appraisals::MatrixBuilder#select_versions (method)">#select_versions</a></span>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>valid mode strings accepted by <span class='object_link'><a href="#select_versions-instance_method" title="Kettle::Jem::Appraisals::MatrixBuilder#select_versions (method)">#select_versions</a></span></p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='qwords_beg'>%w[</span><span class='tstring_content'>major</span><span class='words_sep'> </span><span class='tstring_content'>minor</span><span class='words_sep'> </span><span class='tstring_content'>patch</span><span class='words_sep'> </span><span class='tstring_content'>minor-minmax</span><span class='words_sep'> </span><span class='tstring_content'>semver</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="LARGE_MAJOR_THRESHOLD-constant" class="">LARGE_MAJOR_THRESHOLD =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Returns when a single major version has more than this many minor<br />
+versions, semver mode prunes to only the latest minor + Ruby-cutoff minors.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>when a single major version has more than this many minor<br />
+versions, semver mode prunes to only the latest minor + Ruby-cutoff minors</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>9</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#resolver-instance_method" title="#resolver (instance method)">#<strong>resolver</strong>  &#x21d2; GemVersionResolver </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The resolver used to query RubyGems.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#assign_version_buckets-instance_method" title="#assign_version_buckets (instance method)">#<strong>assign_version_buckets</strong>(gem_name, selected_versions, seams:, buckets:, bucket_ranges:, all_versions: nil)  &#x21d2; Array&lt;Hash&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Assigns each selected version to its optimal Ruby bucket.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(resolver:)  &#x21d2; MatrixBuilder </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A new instance of MatrixBuilder.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#select_versions-instance_method" title="#select_versions (instance method)">#<strong>select_versions</strong>(gem_name, mode:, requirements: nil)  &#x21d2; Array&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns selected version strings for a gem according to the mode.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(resolver:)  &#x21d2; <tt><span class='object_link'><a href="" title="Kettle::Jem::Appraisals::MatrixBuilder (class)">MatrixBuilder</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a new instance of MatrixBuilder.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>resolver</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="GemVersionResolver.html" title="Kettle::Jem::Appraisals::GemVersionResolver (class)">GemVersionResolver</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>a resolver instance for querying gem version data</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+31
+32
+33</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/matrix_builder.rb', line 31</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>resolver:</span><span class='rparen'>)</span>
+  <span class='ivar'>@resolver</span> <span class='op'>=</span> <span class='id identifier rubyid_resolver'>resolver</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="resolver-instance_method">
+  
+    #<strong>resolver</strong>  &#x21d2; <tt><span class='object_link'><a href="GemVersionResolver.html" title="Kettle::Jem::Appraisals::GemVersionResolver (class)">GemVersionResolver</a></span></tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the resolver used to query RubyGems.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="GemVersionResolver.html" title="Kettle::Jem::Appraisals::GemVersionResolver (class)">GemVersionResolver</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the resolver used to query RubyGems</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+28
+29
+30</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/matrix_builder.rb', line 28</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_resolver'>resolver</span>
+  <span class='ivar'>@resolver</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="assign_version_buckets-instance_method">
+  
+    #<strong>assign_version_buckets</strong>(gem_name, selected_versions, seams:, buckets:, bucket_ranges:, all_versions: nil)  &#x21d2; <tt>Array&lt;Hash&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Assigns each selected version to its optimal Ruby bucket.</p>
+
+<p>Instead of cross-producting versions × all buckets, each version<br />
+maps to the ONE bucket where it is the best (newest) choice.</p>
+
+<p><em>Filler</em>: if a bucket has no selected version assigned (gap from<br />
+mode selection skipping versions that naturally cover that bucket),<br />
+backfill with the newest version from a prior seam range that can<br />
+run on that bucket’s Ruby. Filler entries are marked with +filler: true+.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_builder'>builder</span><span class='period'>.</span><span class='id identifier rubyid_assign_version_buckets'>assign_version_buckets</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>activerecord</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>6.1</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>7.2</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+  <span class='label'>seams:</span> <span class='id identifier rubyid_seams'>seams</span><span class='comma'>,</span> <span class='label'>buckets:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>r2</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>r3.1</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>r3</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>bucket_ranges:</span> <span class='id identifier rubyid_ranges'>ranges</span><span class='rparen'>)</span>
+<span class='comment'>#=&gt; [{version: &quot;6.1&quot;, bucket: &quot;r2&quot;}, {version: &quot;7.2&quot;, bucket: &quot;r3.1&quot;}, ...]</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>gem_name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the RubyGems gem name</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>selected_versions</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>versions selected by <span class='object_link'><a href="#select_versions-instance_method" title="Kettle::Jem::Appraisals::MatrixBuilder#select_versions (method)">#select_versions</a></span></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>seams</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>seam entries from <span class='object_link'><a href="RubySeriesDetector.html#find_seams-instance_method" title="Kettle::Jem::Appraisals::RubySeriesDetector#find_seams (method)">RubySeriesDetector#find_seams</a></span></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>buckets</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>all detected Ruby bucket names (e.g., +[“r2.4”, “r3”]+)</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>bucket_ranges</span>
+      
+      
+        <span class='type'>(<tt>Hash{String =&gt; Hash}</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>bucket → +Gem::Version, ceiling: Gem::Version+</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>assignments, each +String, bucket: String+<br />
+(filler entries additionally have +filler: true+)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/matrix_builder.rb', line 91</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_assign_version_buckets'>assign_version_buckets</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='id identifier rubyid_selected_versions'>selected_versions</span><span class='comma'>,</span> <span class='label'>seams:</span><span class='comma'>,</span> <span class='label'>buckets:</span><span class='comma'>,</span> <span class='label'>bucket_ranges:</span><span class='comma'>,</span> <span class='label'>all_versions:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='lbracket'>[</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_selected_versions'>selected_versions</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span> <span class='op'>||</span> <span class='id identifier rubyid_buckets'>buckets</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+
+  <span class='comment'># Build a lookup: version → min_ruby from seams
+</span>  <span class='comment'># For versions between seams, inherit the previous seam&#39;s min_ruby
+</span>  <span class='id identifier rubyid_all_versions'>all_versions</span> <span class='op'>||=</span> <span class='id identifier rubyid_resolver'>resolver</span><span class='period'>.</span><span class='id identifier rubyid_minor_versions_by_major'>minor_versions_by_major</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_flat_map'>flat_map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_e'>e</span><span class='op'>|</span> <span class='id identifier rubyid_e'>e</span><span class='lbracket'>[</span><span class='symbol'>:minors</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_version_min_ruby'>version_min_ruby</span> <span class='op'>=</span> <span class='id identifier rubyid_compute_version_min_rubies'>compute_version_min_rubies</span><span class='lparen'>(</span><span class='id identifier rubyid_all_versions'>all_versions</span><span class='comma'>,</span> <span class='id identifier rubyid_seams'>seams</span><span class='rparen'>)</span>
+
+  <span class='comment'># For each selected version, find which bucket it&#39;s optimal for.
+</span>  <span class='comment'># &quot;Optimal&quot; = the bucket whose ceiling is just below the NEXT SEAM
+</span>  <span class='comment'># boundary (from the full seam list, not just selected versions).
+</span>  <span class='comment'># This correctly handles major mode where selected versions may skip seams.
+</span>  <span class='id identifier rubyid_assignments'>assignments</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_selected_sorted'>selected_sorted</span> <span class='op'>=</span> <span class='id identifier rubyid_selected_versions'>selected_versions</span><span class='period'>.</span><span class='id identifier rubyid_sort_by'>sort_by</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='const'>Gem</span><span class='op'>::</span><span class='const'>Version</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_selected_sorted'>selected_sorted</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_ver'>ver</span><span class='op'>|</span>
+    <span class='id identifier rubyid_ver_min_ruby'>ver_min_ruby</span> <span class='op'>=</span> <span class='id identifier rubyid_version_min_ruby'>version_min_ruby</span><span class='lbracket'>[</span><span class='id identifier rubyid_ver'>ver</span><span class='rbracket'>]</span>
+    <span class='kw'>next</span> <span class='kw'>unless</span> <span class='id identifier rubyid_ver_min_ruby'>ver_min_ruby</span>
+
+    <span class='comment'># Find the next seam boundary AFTER this version&#39;s min_ruby.
+</span>    <span class='comment'># This is the min_ruby where a NEWER version of this gem takes over.
+</span>    <span class='comment'># We use the full seam list, not just selected versions.
+</span>    <span class='id identifier rubyid_next_seam_ruby'>next_seam_ruby</span> <span class='op'>=</span> <span class='id identifier rubyid_find_next_seam_ruby'>find_next_seam_ruby</span><span class='lparen'>(</span><span class='id identifier rubyid_ver'>ver</span><span class='comma'>,</span> <span class='id identifier rubyid_ver_min_ruby'>ver_min_ruby</span><span class='comma'>,</span> <span class='id identifier rubyid_all_versions'>all_versions</span><span class='comma'>,</span> <span class='id identifier rubyid_version_min_ruby'>version_min_ruby</span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_bucket'>bucket</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='id identifier rubyid_next_seam_ruby'>next_seam_ruby</span>
+      <span class='id identifier rubyid_find_bucket_below'>find_bucket_below</span><span class='lparen'>(</span><span class='id identifier rubyid_next_seam_ruby'>next_seam_ruby</span><span class='comma'>,</span> <span class='id identifier rubyid_buckets'>buckets</span><span class='comma'>,</span> <span class='id identifier rubyid_bucket_ranges'>bucket_ranges</span><span class='rparen'>)</span>
+    <span class='kw'>else</span>
+      <span class='comment'># This is in the latest seam range — catch-all bucket
+</span>      <span class='id identifier rubyid_buckets'>buckets</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_assignments'>assignments</span> <span class='op'>&lt;&lt;</span> <span class='lbrace'>{</span><span class='label'>version:</span> <span class='id identifier rubyid_ver'>ver</span><span class='comma'>,</span> <span class='label'>bucket:</span> <span class='id identifier rubyid_bucket'>bucket</span><span class='rbrace'>}</span> <span class='kw'>if</span> <span class='id identifier rubyid_bucket'>bucket</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Handle filler: fill gaps where buckets have no assigned version
+</span>  <span class='id identifier rubyid_fill_bucket_gaps'>fill_bucket_gaps</span><span class='lparen'>(</span><span class='id identifier rubyid_assignments'>assignments</span><span class='comma'>,</span> <span class='id identifier rubyid_selected_sorted'>selected_sorted</span><span class='comma'>,</span> <span class='id identifier rubyid_version_min_ruby'>version_min_ruby</span><span class='comma'>,</span> <span class='id identifier rubyid_buckets'>buckets</span><span class='comma'>,</span> <span class='id identifier rubyid_bucket_ranges'>bucket_ranges</span><span class='comma'>,</span> <span class='id identifier rubyid_all_versions'>all_versions</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="select_versions-instance_method">
+  
+    #<strong>select_versions</strong>(gem_name, mode:, requirements: nil)  &#x21d2; <tt>Array&lt;String&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns selected version strings for a gem according to the mode.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_builder'>builder</span><span class='period'>.</span><span class='id identifier rubyid_select_versions'>select_versions</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>activerecord</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>mode:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>semver</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='comment'>#=&gt; [&quot;5.2&quot;, &quot;6.0&quot;, &quot;6.1&quot;, &quot;7.0&quot;, &quot;7.1&quot;, &quot;7.2&quot;, &quot;8.0&quot;]</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>gem_name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the RubyGems gem name</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>mode</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>one of <span class='object_link'><a href="#VALID_MODES-constant" title="Kettle::Jem::Appraisals::MatrixBuilder::VALID_MODES (constant)">VALID_MODES</a></span>: +”major”+, +”minor”+, +”patch”+, +”minor-minmax”+, or +”semver”+</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>selected minor version strings (e.g., +[“5.2”, “6.0”, “7.1”]+)</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>if +mode+ is not in <span class='object_link'><a href="#VALID_MODES-constant" title="Kettle::Jem::Appraisals::MatrixBuilder::VALID_MODES (constant)">VALID_MODES</a></span></p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/kettle/jem/appraisals/matrix_builder.rb', line 44</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_select_versions'>select_versions</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='label'>mode:</span><span class='comma'>,</span> <span class='label'>requirements:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Invalid mode: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_mode'>mode</span><span class='embexpr_end'>}</span><span class='tstring_content'>. Must be one of: </span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="#VALID_MODES-constant" title="Kettle::Jem::Appraisals::MatrixBuilder::VALID_MODES (constant)">VALID_MODES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>, </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='const'><span class='object_link'><a href="#VALID_MODES-constant" title="Kettle::Jem::Appraisals::MatrixBuilder::VALID_MODES (constant)">VALID_MODES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_mode'>mode</span><span class='rparen'>)</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_mode'>mode</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>patch</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>return</span> <span class='id identifier rubyid_select_patch'>select_patch</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='label'>requirements:</span> <span class='id identifier rubyid_requirements'>requirements</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_by_major'>by_major</span> <span class='op'>=</span> <span class='id identifier rubyid_resolver'>resolver</span><span class='period'>.</span><span class='id identifier rubyid_minor_versions_by_major'>minor_versions_by_major</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='label'>requirements:</span> <span class='id identifier rubyid_requirements'>requirements</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='lbracket'>[</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_by_major'>by_major</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+
+  <span class='id identifier rubyid_current_major'>current_major</span> <span class='op'>=</span> <span class='id identifier rubyid_by_major'>by_major</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span><span class='lbracket'>[</span><span class='symbol'>:major</span><span class='rbracket'>]</span>
+
+  <span class='kw'>case</span> <span class='id identifier rubyid_mode'>mode</span>
+  <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>major</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_select_major'>select_major</span><span class='lparen'>(</span><span class='id identifier rubyid_by_major'>by_major</span><span class='rparen'>)</span>
+  <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>minor</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_select_minor'>select_minor</span><span class='lparen'>(</span><span class='id identifier rubyid_by_major'>by_major</span><span class='rparen'>)</span>
+  <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>patch</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_select_patch'>select_patch</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='label'>requirements:</span> <span class='id identifier rubyid_requirements'>requirements</span><span class='rparen'>)</span>
+  <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>minor-minmax</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_select_minor_minmax'>select_minor_minmax</span><span class='lparen'>(</span><span class='id identifier rubyid_by_major'>by_major</span><span class='comma'>,</span> <span class='id identifier rubyid_current_major'>current_major</span><span class='rparen'>)</span>
+  <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>semver</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_select_semver'>select_semver</span><span class='lparen'>(</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='id identifier rubyid_by_major'>by_major</span><span class='comma'>,</span> <span class='id identifier rubyid_current_major'>current_major</span><span class='comma'>,</span> <span class='label'>requirements:</span> <span class='id identifier rubyid_requirements'>requirements</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Apr 12 11:49:29 2026 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.39 (ruby-4.0.2).
+</div>
+
+    </div>
+  </body>
+</html>
