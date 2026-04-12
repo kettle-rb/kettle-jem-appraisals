@@ -137,7 +137,7 @@ engines:
 # Supported values: org, project, org_and_project
 # Default (when key is absent): org_and_project
 readme:
-  top_logo_mode: org
+  top_logo_mode: org_and_project
   # Sections to preserve from the destination README during template merging.
   # These section headings (case-insensitive) will keep the destination body
   # instead of being overwritten by the template. Default when absent:
@@ -389,7 +389,7 @@ kettle-jem:
     ".gitignore.example": "14864a0c88be3f8c122ab3032efeb782ba5e035013231038acf746a400437a3e"
     ".gitlab-ci.yml.example": "ef64afa9855ebb59bbc87446fa9533238d3ce180966ceb19649a7f165715b92b"
     ".idea/.gitignore.example": "b44a5aa16bf9fe5635558af347454b05a76d600084308a9f43d4d0b54789ecab"
-    ".kettle-jem.yml.example": "b364572eaa086d659e66038db296bc0df39160c070cfee4348096bc9d7581b2c"
+    ".kettle-jem.yml.example": "5ea74507273d12f10b5f35f5d41f858a29167b85e417a8720a36e34076d3578c"
     ".licenserc.yaml.example": "eee56b6604d4db0aff911f55b6f9aab73839d2b3f0850c2139fdc5bf40839037"
     ".opencollective.yml.example": "9ad9b83fe54f0bddac7fb614575585d98f78df0e181ee70a7acd0168d26e3142"
     ".qlty/qlty.toml.example": "cf3d750d2328f6c057b08b7ce3d7ec00a4056c7f0eedda59af321d6caca03553"
