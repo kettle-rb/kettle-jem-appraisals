@@ -1,4 +1,4 @@
-[![Galtzo FLOSS Logo by Aboling0, CC BY-SA 4.0][🖼️galtzo-i]][🖼️galtzo-discord] [![ruby-lang Logo, Yukihiro Matsumoto, Ruby Visual Identity Team, CC BY-SA 2.5][🖼️ruby-lang-i]][🖼️ruby-lang] [![kettle-rb Logo by Aboling0, CC BY-SA 4.0][🖼️kettle-rb-i]][🖼️kettle-rb]
+[![Galtzo FLOSS Logo by Aboling0, CC BY-SA 4.0][🖼️galtzo-i]][🖼️galtzo-discord] [![ruby-lang Logo, Yukihiro Matsumoto, Ruby Visual Identity Team, CC BY-SA 2.5][🖼️ruby-lang-i]][🖼️ruby-lang] [![kettle-rb Logo by Aboling0, CC BY-SA 4.0][🖼️kettle-rb-i]][🖼️kettle-rb] [![kettle-jem-appraisals Logo by Aboling0, CC BY-SA 4.0][🖼️kettle-jem-appraisals-i]][🖼️kettle-jem-appraisals]
 
 [🖼️galtzo-i]: https://logos.galtzo.com/assets/images/galtzo-floss/avatar-192px.svg
 [🖼️galtzo-discord]: https://discord.gg/3qme4XHNKN
@@ -6,6 +6,8 @@
 [🖼️ruby-lang]: https://www.ruby-lang.org/
 [🖼️kettle-rb-i]: https://logos.galtzo.com/assets/images/kettle-rb/avatar-192px.svg
 [🖼️kettle-rb]: https://github.com/kettle-rb
+[🖼️kettle-jem-appraisals-i]: https://logos.galtzo.com/assets/images/kettle-rb/kettle-jem-appraisals/avatar-192px.svg
+[🖼️kettle-jem-appraisals]: https://github.com/kettle-rb/kettle-jem-appraisals
 
 # 🍲 Kettle::Jem::Appraisals
 
@@ -584,7 +586,7 @@ See [CHANGELOG.md][📌changelog] for a list of releases.
 The gem is available under the following license: [AGPL-3.0-only](AGPL-3.0-only.md).
 See [LICENSE.md][📄license] for details.
 
-If none of the available licenses suit your use case, please [contact us](mailto:floss@galtzo.com) to discuss a custom commercial license.
+If none of the available licenses suit your use case, please [contact us](mailto:floss@glatzo.com) to discuss a custom commercial license.
 
 ### © Copyright
 
