@@ -72,7 +72,6 @@ Rake::Task[:default].enhance([:spec])
 # External gems that define tasks - add here!
 require "kettle/dev"
 
-
 ### DUPLICATE DRIFT TASKS
 begin
   require "kettle/drift"
@@ -93,7 +92,6 @@ rescue LoadError
   desc("(stub) kettle:drift is unavailable")
   task("kettle:drift" => "kettle:drift:update")
 end
-
 
 ### TEMPLATING TASKS
 begin
