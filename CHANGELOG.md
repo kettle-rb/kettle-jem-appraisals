@@ -30,11 +30,11 @@ Please file a bug if you notice a violation of semantic versioning.
   - other (5)
   - workflows (1)
 
-- [kc] kettle-jem/prepare: updated 34 project files:
+- [kc] kettle-jem/prepare: updated 44 project files:
   - code and tests (1)
   - configuration (1)
-  - dependencies (30)
-  - other (2)
+  - dependencies (39)
+  - other (3)
 
 ### Deprecated
 
